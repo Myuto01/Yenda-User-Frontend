@@ -18,7 +18,7 @@
       
       // Fetch details based on the user_id
       $.ajax({
-            url: '/api/v1/ticket-details/?buyer_user_id=' + user_id,
+            url: 'https://yenda-crs-api-2.onrender.com/api/v1/ticket-details/?buyer_user_id=' + user_id,
             type: 'GET',
             success: function(response) {
                 // Render details on the page

@@ -6,6 +6,8 @@
     <title>Trip Search | Yenda</title>
 </head>
     <body>
+        <div id="errorContainer"></div>
+
         <form id="trip_search_form">
             <input type="text" name="origin" id="origin" placeholder="Enter origin" required>
 
@@ -13,7 +15,7 @@
 
             <input type="date" name="date" id="date" placeholder="Enter date" required>
 
-            <input type="submit" value="submit" id="tripsearchsubmitButton">
+            <input type="submit" value="Find Bus" id="tripsearchsubmitButton">
             
         </form>
 
@@ -29,12 +31,14 @@
             $("#trip_search_form").submit(function(e) {
                 e.preventDefault(); // Prevent default form submission
 
+                $('#tripsearchsubmitButton').val('Searching')
+
                 // Construct the URL with query parameters
                 var origin = $("#origin").val();
                 var destination = $("#destination").val();
                 var date = $("#date").val();
 
-                var url = 'http://127.0.0.1:8000/api/v1/trip-search/?origin=' + origin + '&destination=' + destination + '&date=' + date;
+                var url = 'https://yenda-crs-api-2.onrender.com/api/v1/trip-search/?origin=' + origin + '&destination=' + destination + '&date=' + date;
 
                 // Send AJAX GET request
                 $.ajax({
@@ -44,16 +48,15 @@
                   
                     success: function(response) {
                         console.log('Success:', response);
-                        
+
                         localStorage.setItem('tripResults', JSON.stringify(response));
 
                         window.location.href = "{% url 'trip-results' %}";
 
-                        // Handle the response
                     },
                     error: function(xhr, status, error) {
                         console.error('Error:', error);
-                        // Handle the error
+                        $('#errorContainer').text('An error occurred: ' + error);
                     }
                 });
             });
@@ -78,6 +81,8 @@
                 },
                 error: function(xhr, status, error) {
                     console.error('Error:', error);
+                    $('#tripsearchsubmitButton').val('Searching')
+
                 }
             });
         });
