@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="registeration_otp_form">
+        <p>please enter code sent to <br> +260 xxxxxx</p>
+        <input type="text" name="registeration_otp" id="registeration_otp" required>
+
+        <input type="submit" value="Ok">
+    </form>
+
+    <button type="button" id="resend_otp">Resend OTP</button>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#registeration_otp_form").submit(function(e) {
+            console.log("Submitted");
+            e.preventDefault(); // Prevent default form submission
+
+            // Get form data 
+            const formData = {
+                otp: $("input[name='registeration_otp']").val(),
+            };
+
+            console.log(formData);
+
+            // Send AJAX request
+            $.ajax({
+                url: "https://yenda-app-api.onrender.com/api/v1/auth/verify-otp/",
+                type: "POST",
+                contentType: "application/json", 
+                data: JSON.stringify( formData ), 
+                success: function(response) {
+                    console.log("Response:", response); 
+              
+                     // Save tokens in local storage
+                    localStorage.setItem("access_token", response.data.access_token)
+                    localStorage.setItem("refresh_token", response.data.refresh_token)
+                        
+
+                    // Redirect to desired URL after successful registration
+                    window.location.href = "{% url 'home' %}";
+                },
+                error: function(xhr, status, error) {   
+                    // Handle errors
+                    console.error("OTP error", error);
+                    var jsonResponse = JSON.parse(xhr.responseText);
+                    var errorMessage = jsonResponse.errors.detail;
+                    // Display error message
+                    $(".error-message").text(errorMessage);
+                }
+            });
+        });
+
+        $("#resend_otp").click(function() {
+            // Retrieve form data from local storage
+            const formData = {
+                first_name: localStorage.getItem('first_name'),
+                last_name: localStorage.getItem('last_name'),
+                phone_number: localStorage.getItem('phone_number'),
+                password: localStorage.getItem('password'),
+                password2: localStorage.getItem('password2'),
+            };
+
+            // Send AJAX request
+            $.ajax({
+                url: "https://yenda-app-api.onrender.com/api/v1/auth/user_registeration/",
+                type: "POST",
+                contentType: "application/json", 
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    console.log("Resend OTP Response:", response);
+                    // Handle success response (if needed)
+                },
+                error: function(xhr, status, error) {   
+                    // Handle errors
+                    console.error("Resend OTP error:", error);
+                    var jsonResponse = JSON.parse(xhr.responseText);
+                    var errorMessage = jsonResponse.errors.detail;
+                    // Display error message (if needed)
+                }
+            });
+        });
+
+     
+
+    });
+</script>
+</body>
+
+</html>
