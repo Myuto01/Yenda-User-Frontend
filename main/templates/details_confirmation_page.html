@@ -42,165 +42,161 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="{% static 'main/js/access_token.js' %}"></script>
     <script>
-        $(document).ready(function() {
-
+        var accessToken; // Declare accessToken variable globally
+    
         function checkAccessToken() {
             // Retrieve the access token from localStorage
-            const accessToken = localStorage.getItem("access_token");
-
+            accessToken = localStorage.getItem("access_token");
+    
             // Check if access token is available
             if (!accessToken) {
                 // Handle the case when access token is not available
                 console.error("Access token not found");
-                return; // Return statement inside a function is valid
+                return false; // Return false if access token is not found
             }
+    
+            // Return true if access token is found
+            return true;
         }
-
-        // Call the function to check access token
-        checkAccessToken();
-     
-            // Initializing the buyer user Id
-            var buyer_user_id;
-
-            $.ajax({
-                url: 'https://yenda-app-api.onrender.com/api/v1/user_id',
-                type: 'GET',
-                contentType: "application/json",
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
-                },
-                success: function(response) {
-                    console.log('User ID:', response.data.user_id);
-                    buyer_user_id = response.data.user_id
-                    $('#submitButton').show();
-
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error:', error);
-                }
-            });
-
-            // Retrieve selected seats from localStorage
-            const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats'));
-
-            if (!selectedSeats || selectedSeats.length === 0) {
-                // No selected seats found
-                $('#passengerDetails').html('<p>No seats selected.</p>');
-            } else {
-                // Display form data
-                const passengerDetailsDiv = $('#passengerDetails');
-
-                // Initialize empty arrays for passenger details
-                var passengerNames = [];
-                var passengerPhoneNumbers = [];
-                var passengerEmails = [];
-                var seatNumbers = [];
-                var formDataKeysToRemove = []; // Declare a global array to store formDataKeys
-
-                selectedSeats.forEach(function(seat) {
-                    const formDataKey = 'passengerDetails_' + seat;
-                    formDataKeysToRemove.push(formDataKey); // Store formDataKey in the global array
-                    const formData = JSON.parse(localStorage.getItem(formDataKey));
-                    if (formData) {
-                        const parsedFormData = decodeURIComponent(formData.replace(/\+/g, ' ')); // Decode form data
-                        const name = parsedFormData.match(/name=([^&]*)/)[1]; // Extract name from form data
-                        const email = parsedFormData.match(/email=([^&]*)/)[1]; // Extract email from form data
-                        const phone = parsedFormData.match(/phone=([^&]*)/)[1]; // Extract phone from form data
-
-                        passengerDetailsDiv.append('<p class="passenger-info"><span class="seat-number">Seat ' + seat + ':</span> <span class="passenger-name">' + name + '</span></p>');
-                        passengerNames.push(name);
-                        passengerPhoneNumbers.push(phone);
-                        passengerEmails.push(email);
-                        seatNumbers.push(seat);
-                    } else {
-                        passengerDetailsDiv.append('<p class="passenger-info">No details found for Seat ' + seat + '.</p>');
+    
+        $(document).ready(function() {
+            if (checkAccessToken()) {
+                var buyer_user_id;
+                var trip; // Declare trip variable outside the loop
+    
+                // Retrieve user ID
+                $.ajax({
+                    url: 'https://yenda-app-api.onrender.com/api/v1/user_id',
+                    type: 'GET',
+                    contentType: "application/json",
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+                    },
+                    success: function(response) {
+                        console.log('User ID:', response.data.user_id);
+                        buyer_user_id = response.data.user_id;
+                        $('#submitButton').show();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
                     }
                 });
-            }
-
-
-    var trip; // Declare trip variable outside the loop
-
-    // Retrieve trip data
-    var tripsData = JSON.parse(localStorage.getItem('tripResults'));
-
-    // Check if tripsData contains the 'data' key
-    if ('data' in tripsData && Array.isArray(tripsData.data)) {
-        var tripResultsList = $("#tripResults");
-        tripsData.data.forEach(function(tripData) {
-            trip = tripData; // Assign trip data to the trip variable
-            var listItem = $("<li></li>");
-            var link = $("<a></a>")
-                .text(trip.attributes.origin + " to " + trip.attributes.destination)
-            var details = $("<p></p>")
-                .text("Company: " + trip.attributes.user.company_name + ", Price: " + trip.attributes.price + ", Date: " + trip.attributes.departure_date + ", Time: " + trip.attributes.departure_time + ", Plate Number: " + trip.attributes.bus.number_plate);
-
-            var featuresList = $("<ul></ul>");
-            trip.attributes.bus.features.forEach(function(feature) {
-                featuresList.append($("<li></li>").text(feature.name));
-            });
-
-            listItem.append(link);
-            listItem.append(details);
-            listItem.append(featuresList);
-            tripResultsList.append(listItem);
-        });
-    } else {
-        // Handle case where tripsData does not have 'data' key or it is not an array
-        console.error("The 'data' key is missing or not an array in tripsData:", tripsData);
-    }
-
-            // JavaScript in your HTML page
-
-    $('#submitButton').click(function(e) {
-        e.preventDefault();
-
-        // Serialize form data
-        var formData = {
-                "data": {
-                    "type": "TripSubmissionAPIView",
-                    "attributes": {
-                        "trip_id": trip.id,
-                        "bus_id": trip.attributes.bus.id,
-                        "buyer_user_id": buyer_user_id,
-                        "passenger_name": passengerNames ,
-                        "passenger_phonenumber": passengerPhoneNumbers,
-                        "passenger_email": passengerEmails,
-                        "seat_number": seatNumbers
-                    }
+    
+                // Retrieve selected seats from localStorage
+                const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats'));
+    
+                if (!selectedSeats || selectedSeats.length === 0) {
+                    // No selected seats found
+                    $('#passengerDetails').html('<p>No seats selected.</p>');
+                } else {
+                    // Display form data
+                    const passengerDetailsDiv = $('#passengerDetails');
+                    var passengerNames = [];
+                    var passengerPhoneNumbers = [];
+                    var passengerEmails = [];
+                    var seatNumbers = [];
+                    var formDataKeysToRemove = []; // Declare a global array to store formDataKeys
+    
+                    selectedSeats.forEach(function(seat) {
+                        const formDataKey = 'passengerDetails_' + seat;
+                        formDataKeysToRemove.push(formDataKey); // Store formDataKey in the global array
+                        const formData = JSON.parse(localStorage.getItem(formDataKey));
+                        if (formData) {
+                            const parsedFormData = decodeURIComponent(formData.replace(/\+/g, ' ')); // Decode form data
+                            const name = parsedFormData.match(/name=([^&]*)/)[1]; // Extract name from form data
+                            const email = parsedFormData.match(/email=([^&]*)/)[1]; // Extract email from form data
+                            const phone = parsedFormData.match(/phone=([^&]*)/)[1]; // Extract phone from form data
+    
+                            passengerDetailsDiv.append('<p class="passenger-info"><span class="seat-number">Seat ' + seat + ':</span> <span class="passenger-name">' + name + '</span></p>');
+                            passengerNames.push(name);
+                            passengerPhoneNumbers.push(phone);
+                            passengerEmails.push(email);
+                            seatNumbers.push(seat);
+                        } else {
+                            passengerDetailsDiv.append('<p class="passenger-info">No details found for Seat ' + seat + '.</p>');
+                        }
+                    });
                 }
-            }
-
-        // Convert the payload object to a JSON string
-        var formDataString = JSON.stringify(formData);
-        
-        console.log("Data:", formDataString)
-
-        // Send AJAX request to submit the form data
-        $.ajax({
-            url: 'https://yenda-crs-api-2.onrender.com/api/v1/trip-submission/',
-            type: 'POST',
-            contentType: 'application/vnd.api+json',
-            data: formDataString,
-            success: function(response) {
-                console.log('Form submitted successfully:', response);
-
-                localStorage.removeItem('tripResults'); 
-                localStorage.removeItem('selectedSeats'); 
-                formDataKeysToRemove.forEach(function(formDataKey) {
-                            localStorage.removeItem(formDataKey);
+    
+                // Retrieve trip data
+                var tripsData = JSON.parse(localStorage.getItem('tripResults'));
+    
+                // Check if tripsData contains the 'data' key
+                if ('data' in tripsData && Array.isArray(tripsData.data)) {
+                    var tripResultsList = $("#tripResults");
+                    tripsData.data.forEach(function(tripData) {
+                        trip = tripData; // Assign trip data to the trip variable
+                        var listItem = $("<li></li>");
+                        var link = $("<a></a>")
+                            .text(trip.attributes.origin + " to " + trip.attributes.destination)
+                        var details = $("<p></p>")
+                            .text("Company: " + trip.attributes.user.company_name + ", Price: " + trip.attributes.price + ", Date: " + trip.attributes.departure_date + ", Time: " + trip.attributes.departure_time + ", Plate Number: " + trip.attributes.bus.number_plate);
+    
+                        var featuresList = $("<ul></ul>");
+                        trip.attributes.bus.features.forEach(function(feature) {
+                            featuresList.append($("<li></li>").text(feature.name));
                         });
-
-                window.location.href = '{% url 'home' %}';
-            },
-            error: function(xhr, status, error) {
-                console.error('Error submitting form:', error);
-                // Handle error response
+    
+                        listItem.append(link);
+                        listItem.append(details);
+                        listItem.append(featuresList);
+                        tripResultsList.append(listItem);
+                    });
+                } else {
+                    // Handle case where tripsData does not have 'data' key or it is not an array
+                    console.error("The 'data' key is missing or not an array in tripsData:", tripsData);
+                }
+    
+                // Submit Button Click Event
+                $('#submitButton').click(function(e) {
+                    e.preventDefault();
+    
+                    // Serialize form data
+                    var formData = {
+                        "data": {
+                            "type": "TripSubmissionAPIView",
+                            "attributes": {
+                                "trip_id": trip.id,
+                                "bus_id": trip.attributes.bus.id,
+                                "buyer_user_id": buyer_user_id,
+                                "passenger_name": passengerNames,
+                                "passenger_phonenumber": passengerPhoneNumbers,
+                                "passenger_email": passengerEmails,
+                                "seat_number": seatNumbers
+                            }
+                        }
+                    };
+    
+                    // Convert the payload object to a JSON string
+                    var formDataString = JSON.stringify(formData);
+                    
+                    console.log("Data:", formDataString);
+    
+                    // Send AJAX request to submit the form data
+                    $.ajax({
+                        url: 'https://yenda-crs-api-2.onrender.com/api/v1/trip-submission/',
+                        type: 'POST',
+                        contentType: 'application/vnd.api+json',
+                        data: formDataString,
+                        success: function(response) {
+                            console.log('Form submitted successfully:', response);
+    
+                            localStorage.removeItem('tripResults'); 
+                            localStorage.removeItem('selectedSeats'); 
+                            formDataKeysToRemove.forEach(function(formDataKey) {
+                                localStorage.removeItem(formDataKey);
+                            });
+    
+                            window.location.href = '{% url 'home' %}';
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error submitting form:', error);
+                            // Handle error response
+                        }
+                    });
+                });
             }
         });
-    });
-
-});
     </script>
-</body>
-</html>
+    </body>
+    </html>

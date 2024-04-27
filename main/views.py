@@ -32,3 +32,13 @@ def tickets_view(request):
 
 def profile_view(request):
     return render(request, 'profile_tab.html')
+
+def password_reset_view(request):
+    return render(request, 'password_reset.html')
+
+def password_reset_otp(request):
+    return render(request, 'password_reset_otp.html')
+
+def password_reset_confirmation(request):
+    return render(request, 'password_reset_confirmation.html')
+    

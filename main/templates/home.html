@@ -24,6 +24,8 @@
         <br><br>
         
         <button id="viewDetailsButton">Tickets</button>
+        <button id="logoutButton">Logout</button>
+
 
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -98,6 +100,21 @@
 
                 }
             });
+        });
+
+        function logout() {
+            // Remove items from localStorage
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('tripResults');
+            localStorage.removeItem('selectedSeats');
+            localStorage.removeItem('access_token');
+
+            // Redirect to another page
+            window.location.href = '/login'; // Replace '/login' with the URL of the login page
+        }
+
+        $('#logoutButton').click(function() {
+            logout();
         });
 });
 </script>

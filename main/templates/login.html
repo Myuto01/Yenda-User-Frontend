@@ -15,6 +15,8 @@
         <input type="submit" id="user_login_submit" value="Login">
 
     </form>
+    <button id="redirectButton">Forgot Password</button>
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
@@ -54,7 +56,16 @@
                 }
             });
         });
-    });
+        // Function to handle button click event and redirect
+        function redirectToPage() {
+            // Replace 'page-url.html' with the URL of the page you want to redirect to
+            window.location.href = '/password-reset/';
+        }
+
+        // Add click event listener to the button
+        document.getElementById('redirectButton').addEventListener('click', redirectToPage);
+
+});
 </script>
 </body>
 </html>
