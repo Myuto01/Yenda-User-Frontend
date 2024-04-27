@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -141,7 +143,9 @@ body {
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script>
+  <script src="{% static 'main/js/access_token.js' %}"></script>
+
+<script>
     $(document).ready(function() {
       // Retrieve trip data
       var tripsData = JSON.parse(localStorage.getItem('tripResults'));

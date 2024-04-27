@@ -51,10 +51,12 @@
                 success: function(response) {
                     console.log("Response:", response); 
               
-                    localStorage.setItem('tripResults', JSON.stringify(response));
 
+                    localStorage.setItem("access_token", response.data.attributes.access_token)
+                    localStorage.setItem("refresh_token", response.data.attributes.refresh_token)
+                        
                     // Redirect to desired URL after successful registration
-                    window.location.href = "{% url 'trip-results' %}";
+                    window.location.href = "{% url 'home' %}";
                 },
                 error: function(xhr, status, error) {   
                     // Handle errors

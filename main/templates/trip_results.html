@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,6 +36,7 @@
     <ul id="tripResults"></ul>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{% static 'main/js/access_token.js' %}"></script>
     <script>
         $(document).ready(function() {
             // Retrieve trip data
