@@ -81,7 +81,45 @@
         </div>
     </div>
 
-    <button>Change Password</button>
+    <button id="changePasswordButton">Change Password</button>
+
+    <!-- The "Change Number" Modal -->
+    <div id="changePasswordModal" class="modal">
+      <div class="modal-content">
+      <span class="close">&times;</span>
+      <form id="passwordChangeForm">
+        <label for="old_password">Old password:</label>
+        
+        <input type="password" name="old_password" id="old_password" placeholder="Please Ente Current Password">
+        
+        <label for="new_password">New password:</label>
+       
+        <input type="password" name="new_password" id="new_password" placeholder="Enter New Password">
+        
+        <label for="confirm_password">Confirm password:</label>
+
+        <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password">
+
+        <input type="submit" value="Change Password" id="changePasswordButton">
+      </form>
+      </div>
+   </div>
+
+
+   <!--Otp Modal-->
+   <div id="otpModal" class="modal">
+        <div class="modal-content">
+        <span class="close">&times;</span>
+        <form id="enterOTPForm">
+          <label for="otp">Enter OTP:</label>
+          
+          <input type="text" name="otp" id="otp" placeholder="Please Enter OTP">
+          
+          <input type="submit" value="Verify" id="enterOTPButton">
+        </form>
+        </div>
+    </div>
+
     <button>Deactivate Account</button>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -126,6 +164,29 @@ numberSpan.onclick = function() {
   numberModal.style.display = "none";
 }
 
+
+
+
+// Change Phone Number Modal
+// Get the "Change Number" modal
+var passwordModal = document.getElementById("changePasswordModal");
+
+// Get the button that opens the "Change Number" modal
+var passwordBtn = document.getElementById("changePasswordButton");
+
+// Get the <span> element that closes the "Change Number" modal
+var passwordSpan = document.getElementsByClassName("close")[1]; // Use index 1 for the second close button
+
+// When the user clicks the "Change Number" button, open the modal
+passwordBtn.onclick = function() {
+  passwordModal.style.display = "block";
+}
+
+// When the user clicks on <span> (x) inside the "Change Number" modal, close it
+  passwordSpan.onclick = function() {
+  passwordModal.style.display = "none";
+}
+
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
   if (event.target == nameModal) {
@@ -134,13 +195,15 @@ window.onclick = function(event) {
   if (event.target == numberModal) {
     numberModal.style.display = "none";
   }
+  if (event.target == passwordModal) {
+    passwordModal.style.display = "none";
+  }
 }
 
 
 
 
-
-/// Handle form submission
+/// Name Change
 $("#nameChangeForm").submit(function(e) {
   e.preventDefault(); // Prevent default form submission
 
@@ -173,7 +236,7 @@ $("#nameChangeForm").submit(function(e) {
   
   // AJAX request
   $.ajax({
-    url: "http://127.0.0.1:8000/api/v1/user/update/",
+    url: "https://yenda-app-api.onrender.com/api/v1/user/update/",
     type: "PUT",
     data: payloadString,
     contentType: "application/json",
@@ -194,7 +257,10 @@ $("#nameChangeForm").submit(function(e) {
     }
   });
 
- // Handle form submission
+
+
+ // Number Change 
+
 $("#numberChangeForm").submit(function(e) {
   e.preventDefault(); // Prevent default form submission
 
@@ -222,7 +288,54 @@ $("#numberChangeForm").submit(function(e) {
   
   // AJAX request
   $.ajax({
-    url: "http://127.0.0.1:8000/api/v1/user/update/",
+    url: "https://yenda-app-api.onrender.com/api/v1/user/update/",
+    type: "PUT",
+    data: payloadString,
+    contentType: "application/json",
+    beforeSend: function(xhr) {
+      xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+    },
+    success: function(response) {
+      console.log("Change successful:", response);
+
+      $('#changeNumberModal').modal('hide');
+
+      $('#otpModal').modal('show');
+    },
+    error: function(xhr, status, error) {
+      // Handle error
+      console.error("Error:", error);
+      // Provide feedback to the user (e.g., display an error message)
+    }
+  });
+});
+
+
+
+// Password Change
+
+$("#passwordChangeForm").submit(function(e) {
+  e.preventDefault(); // Prevent default form submission
+
+  console.log("Submitted");
+
+  const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE1NjU3NzgxLCJpYXQiOjE3MTM5Mjk3ODEsImp0aSI6IjY2ZmZiNjQ1ZTQ4ZjRkMzJhNmQ4ODQ1ZDE3MzY5ODc2IiwidXNlcl9pZCI6MTF9.7fm6g3lbrL_Y_nd12XaLsuWqCK6QTY-BgflTWrh4Ays";
+
+  // Create an empty payload object
+  var payload = {
+    "user_id": 11,
+    "old_password": $("#old_password").val(),
+    "password": $("#new_password").val(),
+    "password2": $("#confirm_password").val()   
+  };
+
+  var payloadString = JSON.stringify(payload);
+  
+  console.log('Data sent:', payloadString);
+  
+  // AJAX request
+  $.ajax({
+    url: "https://yenda-app-api.onrender.com/api/v1/user/change_password/",
     type: "PUT",
     data: payloadString,
     contentType: "application/json",
@@ -241,6 +354,47 @@ $("#numberChangeForm").submit(function(e) {
     }
   });
 });
+
+
+$("#enterOTPForm").submit(function(e) {
+  e.preventDefault(); // Prevent default form submission
+
+  console.log("Submitted");
+
+  const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE1NjU3NzgxLCJpYXQiOjE3MTM5Mjk3ODEsImp0aSI6IjY2ZmZiNjQ1ZTQ4ZjRkMzJhNmQ4ODQ1ZDE3MzY5ODc2IiwidXNlcl9pZCI6MTF9.7fm6g3lbrL_Y_nd12XaLsuWqCK6QTY-BgflTWrh4Ays";
+
+  // Create an empty payload object
+  var payload = {
+    "user_id": 11,
+    "otp": $("#otp").val(),  
+  };
+
+  var payloadString = JSON.stringify(payload);
+  
+  console.log('Data sent:', payloadString);
+  
+  // AJAX request
+  $.ajax({
+    url: "https://yenda-app-api.onrender.com/api/v1/user/verify-otp/",
+    type: "PUT",
+    data: payloadString,
+    contentType: "application/json",
+    beforeSend: function(xhr) {
+      xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+    },
+    success: function(response) {
+      // Handle success
+      console.log("Change successful:", response);
+      // Close the modal or provide feedback to the user
+    },
+    error: function(xhr, status, error) {
+      // Handle error
+      console.error("Error:", error);
+      // Provide feedback to the user (e.g., display an error message)
+    }
+  });
+});
+
 
 });
 

@@ -29,3 +29,6 @@ def confirm_passenger_details_view(request):
 
 def tickets_view(request):
     return render(request, 'tickets.html')
+
+def profile_view(request):
+    return render(request, 'profile_tab.html')
