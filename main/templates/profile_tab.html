@@ -83,6 +83,20 @@
         </div>
     </div>
 
+    <!--Otp Modal-->
+   <div id="numberChangeOtpModal" class="modal">
+        <div class="modal-content">
+        <span class="close">&times;</span>
+        <form id="numberChangeOTPForm">
+          <label for="number_change_otp">Enter OTP:</label>
+          
+          <input type="text" name="number_change_otp" id="numberChangeOtp" placeholder="Please Enter OTP">
+          
+          <input type="submit" value="Change Number" id="numberChangeOTPButton">
+        </form>
+        </div>
+    </div>
+
     <button id="changePasswordButton">Change Password</button>
 
     <!-- The "Change Number" Modal -->
@@ -108,19 +122,7 @@
    </div>
 
 
-   <!--Otp Modal-->
-   <div id="otpModal" class="modal">
-        <div class="modal-content">
-        <span class="close">&times;</span>
-        <form id="enterOTPForm">
-          <label for="otp">Enter OTP:</label>
-          
-          <input type="text" name="otp" id="otp" placeholder="Please Enter OTP">
-          
-          <input type="submit" value="Verify" id="enterOTPButton">
-        </form>
-        </div>
-    </div>
+
 
     <button>Deactivate Account</button>
 
@@ -128,81 +130,61 @@
 <script src="{% static 'main/js/access_token.js' %}"></script>
 
 <script>
-// Get the modal
-// Get the "Change Name" modal
-var nameModal = document.getElementById("myModal");
-
-// Get the button that opens the "Change Name" modal
-var nameBtn = document.getElementById("changeNameButton");
-
-// Get the <span> element that closes the "Change Name" modal
-var nameSpan = document.getElementsByClassName("close")[0];
-
-// When the user clicks the "Change Name" button, open the modal
-nameBtn.onclick = function() {
-  nameModal.style.display = "block";
+// Function to display modal
+function showModal(modal) {
+    modal.style.display = "block";
 }
 
-// When the user clicks on <span> (x) inside the "Change Name" modal, close it
-nameSpan.onclick = function() {
-  nameModal.style.display = "none";
+// Function to hide modal
+function hideModal(modal) {
+    modal.style.display = "none";
 }
 
-// Change Phone Number Modal
-// Get the "Change Number" modal
-var numberModal = document.getElementById("changeNumberModal");
-
-// Get the button that opens the "Change Number" modal
-var numberBtn = document.getElementById("changeNumberButton");
-
-// Get the <span> element that closes the "Change Number" modal
-var numberSpan = document.getElementsByClassName("close")[1]; // Use index 1 for the second close button
-
-// When the user clicks the "Change Number" button, open the modal
-numberBtn.onclick = function() {
-  numberModal.style.display = "block";
+// Event listener for "Change Name" button
+document.getElementById("changeNameButton").onclick = function() {
+    showModal(document.getElementById("myModal"));
 }
 
-// When the user clicks on <span> (x) inside the "Change Number" modal, close it
-numberSpan.onclick = function() {
-  numberModal.style.display = "none";
+// Event listener for "Change Number" button
+document.getElementById("changeNumberButton").onclick = function() {
+    showModal(document.getElementById("changeNumberModal"));
 }
 
-
-
-
-// Change Phone Number Modal
-// Get the "Change Number" modal
-var passwordModal = document.getElementById("changePasswordModal");
-
-// Get the button that opens the "Change Number" modal
-var passwordBtn = document.getElementById("changePasswordButton");
-
-// Get the <span> element that closes the "Change Number" modal
-var passwordSpan = document.getElementsByClassName("close")[1]; // Use index 1 for the second close button
-
-// When the user clicks the "Change Number" button, open the modal
-passwordBtn.onclick = function() {
-  passwordModal.style.display = "block";
+// Event listener for "Change Password" button
+document.getElementById("changePasswordButton").onclick = function() {
+    showModal(document.getElementById("changePasswordModal"));
 }
 
-// When the user clicks on <span> (x) inside the "Change Number" modal, close it
-  passwordSpan.onclick = function() {
-  passwordModal.style.display = "none";
+// Event listeners for close buttons
+var closeButtons = document.getElementsByClassName("close");
+for (var i = 0; i < closeButtons.length; i++) {
+    closeButtons[i].onclick = function() {
+        hideModal(this.parentNode.parentNode); // Hide parent modal
+    }
 }
 
-// When the user clicks anywhere outside of the modal, close it
+// Event listener for clicking outside the modal to close it
 window.onclick = function(event) {
-  if (event.target == nameModal) {
-    nameModal.style.display = "none";
-  }
-  if (event.target == numberModal) {
-    numberModal.style.display = "none";
-  }
-  if (event.target == passwordModal) {
-    passwordModal.style.display = "none";
-  }
+    var modals = document.getElementsByClassName("modal");
+    for (var i = 0; i < modals.length; i++) {
+        if (event.target == modals[i]) {
+            hideModal(modals[i]);
+        }
+    }
 }
+
+// Event listener for submit button in changeNumberModal
+document.getElementById("numberChange").addEventListener("click", function(event) {
+    hideModal(document.getElementById("changeNumberModal"));
+    showModal(document.getElementById("numberChangeOtpModal"));
+});
+
+// Event listener for submit button in numberChangeOtpModal
+document.getElementById("numberChangeOTPButton").addEventListener("click", function(event) {
+    // Add logic for OTP submission
+    //hideModal(document.getElementById("numberChangeOtpModal"));
+});
+
 
 var accessToken; // Declare accessToken variable globally
 
@@ -270,7 +252,7 @@ if (checkAccessToken()) {
     payload["user_id"] = buyer_user_id;
 
     // Call updateUserProfile function with payload
-    updateUserProfile(payload);
+    updateUserProfile(payload, 'name'); 
 });
 
 
@@ -283,7 +265,7 @@ if (checkAccessToken()) {
             "phone_number": $("#newNumber").val().trim()
         };
 
-        updateUserProfile(payload);
+        updateUserProfile(payload, 'number'); 
     });
 
     // Password Change Form Submission
@@ -300,16 +282,18 @@ if (checkAccessToken()) {
         changeUserPassword(payload);
     });
 
+
+
     // OTP Form Submission
-    $("#enterOTPForm").submit(function(e) {
+    $("#numberChangeOTPForm").submit(function(e) {
         e.preventDefault();
 
         var payload = {
             "user_id": buyer_user_id,
-            "otp": $("#otp").val()
+            "otp": $("#numberChangeOtp").val()
         };
 
-        verifyOTP(payload);
+        verifyNumberChangeOTP(payload);
     });
 
 }
@@ -329,8 +313,9 @@ function updateUserProfile(payload) {
         },
         success: function(response) {
             console.log("Change successful:", response);
-            // Close the modal or provide feedback to the user
+            
         },
+
         error: function(xhr, status, error) {
             console.error("Error:", error);
             // Provide feedback to the user (e.g., display an error message)
@@ -362,14 +347,15 @@ function changeUserPassword(payload) {
     });
 }
 
-function verifyOTP(payload) {
+
+function verifyNumberChangeOTP(payload) {
     var payloadString = JSON.stringify(payload);
 
     console.log('Data sent:', payloadString);
 
     $.ajax({
         url: "https://yenda-app-api.onrender.com/api/v1/user/verify-otp/",
-        type: "PUT",
+        type: "POST",
         data: payloadString,
         contentType: "application/json",
         beforeSend: function(xhr) {
