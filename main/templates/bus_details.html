@@ -6,10 +6,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Seat Selection</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400&family=DM+Sans:wght@700&display=swap" rel="stylesheet">
+
 <style>
-    /* Global styles */
-body {
-  font-family: Arial, sans-serif;
+  body {
+    font-family: 'Poppins', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'DM Sans', sans-serif;
+}
+
+p {
+    font-family: 'Poppins', sans-serif;
 }
 
 /* Header styles */
@@ -17,15 +26,14 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
 }
 
-/* Indicator styles */
 .indicators {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    gap: 6px;
 }
 
 .indicator {
@@ -54,7 +62,7 @@ body {
 }
 
 .your-seat {
-  background-color: blue;
+  background-color: #6284FF;
   border: black;
   border-style: solid;
 }
@@ -101,19 +109,80 @@ body {
   float: right;
   cursor: pointer;
 }
-/* Add this CSS code to define the style for selected seats */
+
 .seat.selected {
-  background-color: blue;
+  background-color: #6284FF;
 }
 
+li{
+  list-style: none;
+}
+
+.details-container{
+  background: #FF7300;
+  color: white;
+}
+
+.trip-origin-destination {
+    text-align: center;
+    position: relative;
+    top: 9px;
+}
+
+.company-name{
+    font-size: 21px;
+    margin: 7px;
+}
+
+.departure-date {
+    position: relative;
+    left: 181px;
+    top: 82px;
+}
+
+.departure-time {
+    position: relative;
+    left: 148px;
+    top: 45px;
+}
+
+.feature{
+    border: none;
+    position: relative;
+    right: 30px;
+}
+
+ .available-seats{
+    position: relative;
+    left: 10px;
+    bottom: 2px;
+}
+
+#confirmButton{
+    padding: 20px;
+    background: white;
+    border: none;
+} 
 </style>    
 </head>
 <body>
   <div class="header">
-    <h1>Seat Selection</h1>
-    <button id="confirmButton">Confirm Selection</button>
+    <h4>Please select your seat</h4>
+    <button id="confirmButton">Next</button>
   </div>
   
+  
+
+  <div class="details-container">
+    <div id="tripResults">
+      <!-- Trip details will be dynamically generated here -->
+    </div>
+
+    <div id="tripDetails">
+      <!-- Trip details will be dynamically generated here -->
+    </div>
+  </div>
+
   <div class="indicators">
     <div class="indicator booked"></div>
     <span>Booked</span>
@@ -123,17 +192,11 @@ body {
     <span>Your Seat</span>
   </div>
 
-  <div id="tripDetails">
-    <!-- Trip details will be dynamically generated here -->
-  </div>
-
-  <div id="tripResults">
-    <!-- Trip details will be dynamically generated here -->
-  </div>
-
   <div class="seatGrid" id="seatGrid">
     <!-- Seats will be dynamically generated here -->
   </div>
+
+  
 
   <div id="modal" class="modal">
     <div class="modal-content">
@@ -149,28 +212,62 @@ body {
     $(document).ready(function() {
       // Retrieve trip data
       var tripsData = JSON.parse(localStorage.getItem('tripResults'));
+      
+      function stripDate(dateString) {
+          return dateString.replace("T00:00:00Z", "");
+      }
+
+      function stripSeconds(timeString) {
+          return timeString.split(":").slice(0, 2).join(":");
+      }
 
       // Check if tripsData contains the 'data' key
       if ('data' in tripsData && Array.isArray(tripsData.data)) {
-        var tripResultsList = $("#tripResults");
-        tripsData.data.forEach(function(trip) {
-          var listItem = $("<li></li>");
-          var link = $("<a></a>")
-            .text(trip.attributes.origin + " to " + trip.attributes.destination + " - " + trip.attributes.departure_date + " " + trip.attributes.departure_time)
-          var details = $("<p></p>")
-            .text("Company: " + trip.attributes.user.company_name + ", Price: " + trip.attributes.price +  ", Date: " + trip.attributes.departure_date + ", Time: " + trip.attributes.departure_time);
+    var tripResultsList = $("#tripResults");
+    tripsData.data.forEach(function(trip) {
+        var listItem = $("<li></li>");
 
-          var featuresList = $("<ul></ul>");
-          trip.attributes.bus.features.forEach(function(feature) {
-            featuresList.append($("<li></li>").text(feature.name));
-          });
+        // Create a link for the trip with class
+        var originDestination = $("<p></p>")
+            .addClass("trip-origin-destination")
+            .text(trip.attributes.origin + " to " + trip.attributes.destination)
 
-          listItem.append(link);
-          listItem.append(details);
-          listItem.append(featuresList);
-          tripResultsList.append(listItem);
+        // Create individual elements for each attribute with classes
+        var company = $("<span></span>")
+            .addClass("company-name")
+            .text(trip.attributes.user.company_name);
+
+        var price = $("<span></span>")
+            .addClass("price")
+            .text(trip.attributes.price);
+
+        var departureDate = $("<span></span>")
+            .addClass("departure-date")
+            .text(stripDate(trip.attributes.departure_date));
+
+        var departureTime = $("<span></span>")
+            .addClass("departure-time")
+            .text(stripSeconds(trip.attributes.departure_time));
+
+        // Create a paragraph to hold the details
+        var details = $("<p></p>").addClass("trip-details");
+        details.append(company).append(departureDate).append(departureTime);
+
+        // Create the features list with a class
+        var featuresList = $("<ul></ul>").addClass("features-list");
+        trip.attributes.bus.features.forEach(function(feature) {
+            featuresList.append($("<li></li>").addClass("feature").css("border", "none").text(feature.name));
         });
-      } else {
+
+        // Append elements to the list item
+        listItem.append(originDestination);
+        listItem.append(details);
+        listItem.append(featuresList);
+
+        // Append the list item to the results list
+        tripResultsList.append(listItem);
+    });
+} else {
         // Handle case where tripsData does not have 'data' key or it is not an array
         console.error("The 'data' key is missing or not an array in tripsData:", tripsData);
       }
@@ -193,7 +290,8 @@ body {
 
         // Display trip details
         var tripDetailsDiv = $("#tripDetails");
-        tripDetailsDiv.append("<p>Available Seats: " + response.data.available_seats + "</p>");
+        tripDetailsDiv.addClass('available-seats');
+        tripDetailsDiv.append("<p>" + response.data.available_seats + " Seats left </p>");
 
         const totalSeats = response.data.bus.total_seats;
         const bookedSeats = response.data.booked_seats;

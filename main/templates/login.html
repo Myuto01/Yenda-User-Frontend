@@ -4,18 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Yenda</title>
+    <style>
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+
+        #user-login_form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #user-login_form input {
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        #redirectButton {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        #redirectButton:hover {
+            background-color: #0056b3;
+        }
+
+    
+        .success-message,
+        .error-message-global {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 9999;
+            display: none;
+        }
+
+        .success-message {
+            background: rgb(0, 255, 0);
+            color: black;
+        }
+
+        .error-message-global {
+            background: rgb(255, 0, 0);
+            color: white;
+        }
+
+    </style>
 </head>
 <body>
-    <form id="user-login_form">
+    <div id="global-error-message" class="error-message-global"></div>
+    <div id="success-message" class="success-message"></div>
 
-        <input type="tel" name="phone_number" id="phone_number" placeholder="Enter Phone Number">
-
-        <input type="password" name="password" id="password" placeholder="Enter Password">
-
-        <input type="submit" id="user_login_submit" value="Login">
-
-    </form>
-    <button id="redirectButton">Forgot Password</button>
+    <div class="container">
+        <form id="user-login_form">
+            <input type="tel" name="phone_number" id="phone_number" placeholder="Enter Phone Number">
+            <input type="password" name="password" id="password" placeholder="Enter Password">
+            <input type="submit" id="user_login_submit" value="Login">
+        </form>
+        <button id="redirectButton">Forgot Password</button>
+    </div>
+    
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -44,7 +107,7 @@
                 data: formDataString,
                 success: function(response) {
                     console.log('Form submitted successfully:', response);
-
+                    displaySuccessMessage('Successful login')
                     localStorage.setItem("access_token", response.data.attributes.access_token)
                     localStorage.setItem("refresh_token", response.data.attributes.refresh_token)
                         
@@ -52,7 +115,7 @@
                 },
                 error: function(xhr, status, error) {
                     console.error('Error submitting form:', error);
-                    // Handle error response
+                    displayGlobalErrorMessage(xhr);
                 }
             });
         });
@@ -65,6 +128,32 @@
         // Add click event listener to the button
         document.getElementById('redirectButton').addEventListener('click', redirectToPage);
 
+        function displaySuccessMessage(message) {
+        var successMessageDiv = $('#success-message');
+        successMessageDiv.text(message);
+        successMessageDiv.show();
+
+        setTimeout(function() {
+            successMessageDiv.hide();
+        }, 5000);
+    }
+
+    function displayGlobalErrorMessage(xhr) {
+                var errorMessage = 'An unknown error occurred.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                } else if (xhr.responseText) {
+                    errorMessage = xhr.responseText;
+                }
+
+                var globalErrorMessageDiv = $('#global-error-message');
+                globalErrorMessageDiv.text(errorMessage);
+                globalErrorMessageDiv.show();
+
+                setTimeout(function() {
+                    globalErrorMessageDiv.hide();
+                }, 5000);
+            }
 });
 </script>
 </body>

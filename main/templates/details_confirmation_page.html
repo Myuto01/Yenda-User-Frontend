@@ -1,5 +1,6 @@
+{% extends 'base.html' %}
 {% load static %}
-
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,21 +14,195 @@
             padding: 20px;
         }
 
-        .passenger-info {
-            margin-bottom: 10px;
-        }
-
-        .seat-number {
-            font-weight: bold;
-            color: #333;
-        }
 
         .passenger-name {
-            color: #007bff;
+            font-weight: bold;
+        }
+
+        li{
+            list-style: none;
+        }
+
+        .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        }
+
+        .company-name{
+            background: #FF7300;
+            padding: 20px;
+            border-radius: 20px;
+            width: 105%;
+            display: flex;
+            position: relative;
+            bottom: 64px;
+            right: 49px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .departure-time {
+            position: relative;
+            bottom: 145px;
+            left: 204px;
+            width: 20px;
+            display: flex;
+            font-weight: bold;
+        }
+
+        .seconds {
+            position: relative;
+            bottom: 170px;
+            left: 205px;
+            width: 20px;
+            display: flex;
+            font-weight: bold;
+        }
+
+        .passenger-details-container {
+            background: white;
+            padding: 160px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            top: 40px;
+            border-radius: 20px;
+
+        }
+
+        .price-container {
+            background: white;
+            padding: 50px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            bottom: 98px;
+            border-radius: 20px;
+        }
+
+        .passenger-details-container::after {
+            content: "";
+            display: block;
+            position: absolute;
+            bottom: 0;
+            left: 14px;
+            width: 91%;
+            border-bottom: 1px dashed black;
+        }
+
+        #tripResults{
+            position: relative;
+            bottom: 315px;
+        }
+
+        .origin-destination {
+            position: relative;
+            z-index: 1;
+            top: 73px;
+            right: 8px;
+            width: 53%;
+            display: flex;
+            gap: 60px;
+        }
+
+        .origin-destination  i{
+            font-size: 20px;
+        }
+
+        .trip-details{
+            height: 0;
+        }
+
+        .plate-number-text{
+            display: flex;
+            flex-direction: column;
+            height: 0;
+            width: 40%;
+            position: relative;
+            right: 20px;
+            bottom: 20px;
+            font-size: 14px;
+        }
+
+        .plate-number{
+            position: relative;
+            top: 13px;
+            right: 19px;
+        }
+
+        .departure-date-text {
+            display: flex;
+            width: 0;
+            height: 0;
+            position: relative;
+            left: 226px;
+            bottom: 43px;
+            font-size: 14px;
+        }
+
+        .departure-date{
+            position: relative;
+            top: 12px;
+            left: 68px;
+            font-weight: bold;
+        }
+
+        #passengerDetails{
+            position: relative;
+            bottom: 205px;
+            left: 20px;
+        }
+
+        .seat-number{
+            position: relative;
+            left: 85px;
+            font-size: 14px;
+            background: #6248FF;
+            padding: 7px;
+            border-radius: 13px;
+            color: white;
+        }
+
+        .total-price {
+            display: flex;
+            height: 0;
+            width: 95px;
+            position: relative;
+            bottom: 30px;
+            left: 65px;
+        }
+
+        .price {
+            font-weight: bold;
+            position: relative;
+            top: 300px;
+            z-index: 1;
+            left: 20px;
+        }
+
+        #tripSubmitionButton {
+            width: 86%;
+            position: relative;
+            bottom: 76px;
+            left: 25px;
+            border-radius: 8px;
+            border: 1px solid;
+            height: 32px;
+            background: #FF7300;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
+    <div class="header">
+        <h4>Ticket details  </h4>
+    </div>
+
+    <div class="passenger-details-container">
+        
+    </div>
 
     <ul id="tripResults"></ul>
 
@@ -37,7 +212,11 @@
 
     <div id="passengerDetails"></div>
 
-    <button id="submitButton" style="display: none;">Submit</button> 
+    <div class="price-container">
+        <p class="total-price">Total price:</p><br>
+    </div>
+
+    <button style="display: none;" id="tripSubmitionButton">Payment</button> 
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="{% static 'main/js/access_token.js' %}"></script>
@@ -47,7 +226,7 @@
         function checkAccessToken() {
             // Retrieve the access token from localStorage
             accessToken = localStorage.getItem("access_token");
-    
+            
             // Check if access token is available
             if (!accessToken) {
                 // Handle the case when access token is not available
@@ -62,7 +241,6 @@
         $(document).ready(function() {
             if (checkAccessToken()) {
                 var buyer_user_id;
-                var trip; // Declare trip variable outside the loop
     
                 // Retrieve user ID
                 $.ajax({
@@ -75,7 +253,7 @@
                     success: function(response) {
                         console.log('User ID:', response.data.user_id);
                         buyer_user_id = response.data.user_id;
-                        $('#submitButton').show();
+                        $('#tripSubmitionButton').show();
                     },
                     error: function(xhr, status, error) {
                         console.error('Error:', error);
@@ -107,7 +285,7 @@
                             const email = parsedFormData.match(/email=([^&]*)/)[1]; // Extract email from form data
                             const phone = parsedFormData.match(/phone=([^&]*)/)[1]; // Extract phone from form data
     
-                            passengerDetailsDiv.append('<p class="passenger-info"><span class="seat-number">Seat ' + seat + ':</span> <span class="passenger-name">' + name + '</span></p>');
+                            passengerDetailsDiv.append('<p class="passenger-info"> Passenger:<br>  <span class="passenger-name">' + name + '</span> <span class="seat-number">Seat ' + seat + '</span> </p>');
                             passengerNames.push(name);
                             passengerPhoneNumbers.push(phone);
                             passengerEmails.push(email);
@@ -120,44 +298,93 @@
     
                 // Retrieve trip data
                 var tripsData = JSON.parse(localStorage.getItem('tripResults'));
-    
+                
+                function stripDate(dateString) {
+                    return dateString.replace("T00:00:00Z", "");
+                }
+
+                function stripSeconds(timeString) {
+                    return timeString.split(":").slice(0, 2).join(":");
+                }
+
+                var selectedTrip = null;
+
                 // Check if tripsData contains the 'data' key
                 if ('data' in tripsData && Array.isArray(tripsData.data)) {
                     var tripResultsList = $("#tripResults");
                     tripsData.data.forEach(function(tripData) {
-                        trip = tripData; // Assign trip data to the trip variable
-                        var listItem = $("<li></li>");
-                        var link = $("<a></a>")
-                            .text(trip.attributes.origin + " to " + trip.attributes.destination)
-                        var details = $("<p></p>")
-                            .text("Company: " + trip.attributes.user.company_name + ", Price: " + trip.attributes.price + ", Date: " + trip.attributes.departure_date + ", Time: " + trip.attributes.departure_time + ", Plate Number: " + trip.attributes.bus.number_plate);
-    
-                        var featuresList = $("<ul></ul>");
-                        trip.attributes.bus.features.forEach(function(feature) {
-                            featuresList.append($("<li></li>").text(feature.name));
-                        });
-    
-                        listItem.append(link);
+                        var trip = tripData; // Assign trip data to the trip variable
+
+                        selectedTrip = trip;
+                        
+                        var listItem = $("<li></li>").addClass("trip-item");
+
+                        var originDestination = $("<p></p>")
+                            .addClass("origin-destination")
+                            .html(trip.attributes.origin + "    <i class='fa fa-bus' aria-hidden='true'></i>      " + trip.attributes.destination);
+
+                        var company = $("<span></span>")
+                            .addClass("company-name")
+                            .text(trip.attributes.user.company_name);
+
+                        var price = $("<span></span>")
+                            .addClass("price")
+                            .html("K" + trip.attributes.price);
+
+                        var departureDateText = $("<span></span>")
+                            .addClass("departure-date-text")
+                            .html("<p>Date:</p>")
+
+                        var departureDate = $("<span></span>")
+                            .addClass("departure-date")
+                            .text(stripDate(trip.attributes.departure_date));
+
+                        var departureTimeText = $("<span></span>")
+                            .addClass("departure-time")
+                            .html("<small>Time:</small><br>")
+                        
+                        var departureTime = $("<span></span)")
+                            .addClass("seconds")
+                            .html("<p>" +  stripSeconds(trip.attributes.departure_time) + "</p>"); 
+
+                        var plateNumberText = $("<span></span>")
+                            .addClass("plate-number-text")
+                            .html("<p>Plate number:</p>");
+
+                        var plateNumber = $("<span></span>")
+                            .addClass("plate-number")
+                            .html("<strong>" + trip.attributes.bus.number_plate + "</strong>");
+
+                        // Append individual elements to the details paragraph
+                        var details = $("<p></p>").addClass("trip-details");
+                        details.append(company).append(plateNumberText).append(plateNumber).append(price).append(departureDate).append(departureDateText).append(departureTimeText).append(departureTime);
+
+                        // Append elements to the list item
+                        listItem.append(originDestination);
                         listItem.append(details);
-                        listItem.append(featuresList);
+
+                        // Append the list item to the results list
                         tripResultsList.append(listItem);
                     });
                 } else {
                     // Handle case where tripsData does not have 'data' key or it is not an array
                     console.error("The 'data' key is missing or not an array in tripsData:", tripsData);
                 }
-    
+
+                    
                 // Submit Button Click Event
-                $('#submitButton').click(function(e) {
+                $('#tripSubmitionButton').click(function(e) {
                     e.preventDefault();
-    
+
+                    $('#tripSubmitionButton').val('Submitting...')
+
                     // Serialize form data
                     var formData = {
                         "data": {
                             "type": "TripSubmissionAPIView",
                             "attributes": {
-                                "trip_id": trip.id,
-                                "bus_id": trip.attributes.bus.id,
+                                "trip_id": selectedTrip.id,
+                                "bus_id": selectedTrip.attributes.bus.id,
                                 "buyer_user_id": buyer_user_id,
                                 "passenger_name": passengerNames,
                                 "passenger_phonenumber": passengerPhoneNumbers,
@@ -180,23 +407,24 @@
                         data: formDataString,
                         success: function(response) {
                             console.log('Form submitted successfully:', response);
-    
                             localStorage.removeItem('tripResults'); 
                             localStorage.removeItem('selectedSeats'); 
                             formDataKeysToRemove.forEach(function(formDataKey) {
                                 localStorage.removeItem(formDataKey);
+                            $('#tripSubmitionButton').val('Submit')
                             });
     
                             window.location.href = '{% url 'home' %}';
                         },
                         error: function(xhr, status, error) {
                             console.error('Error submitting form:', error);
-                            // Handle error response
+                            $('#tripSubmitionButton').val('Submit')
                         }
                     });
                 });
-            }
-        });
+                }
+            });
     </script>
     </body>
     </html>
+{% endblock %}

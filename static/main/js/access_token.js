@@ -13,6 +13,5 @@ function checkAccessTokenAndRedirect() {
         return; // Exit the function if redirected
     }
 }
-
 // Call the function to check access token and redirect
 checkAccessTokenAndRedirect();
