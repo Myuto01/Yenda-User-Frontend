@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        img {
+        margin: 105px;
+    }
+
+    .line{
+        border-bottom: 1px solid black;
+    }
+    </style>
+</head>
+<body>
+
+    <h4>About and info</h4>
+
+    <div class="line"></div>
+
+    <div class="text-container">
+        <p>About us</p>
+        <p>Terms of Service</p>
+        <p>Privacy Policy</p>
+    </div>
+
+    <div class="line"></div>
+
+    <img src="http://www.htmldog.com/badge1.gif" alt="profile picture" style="border-radius: 50%; border: 1px solid black;" width="135" height="125">  
+
+
+</body>
+</html>
+{% endblock %}

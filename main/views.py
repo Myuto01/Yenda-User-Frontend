@@ -36,6 +36,15 @@ def profile_main_view(request):
 def profile_view(request):
     return render(request, 'profile_tab.html')
 
+def about_info_view(request):
+    return render(request, 'about_and_info.html')
+
+def help_support_view(request):
+    return render(request, 'help-support.html')
+
+def settings_view(request):
+    return render(request, 'settings.html')
+
 def password_reset_view(request):
     return render(request, 'password_reset.html')
 

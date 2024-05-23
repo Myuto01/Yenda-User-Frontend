@@ -82,9 +82,9 @@
     <div class="line"></div>
 
     <div class="button-container">
-        <button type="button"> <i class='bx bx-user'></i> Account details <i class='bx bx-chevron-right'></i></button>
+        <a href="{% url 'account-info' %}"><button type="button"> <i class='bx bx-user'></i> Account details <i class='bx bx-chevron-right'></i></button></a>
        
-        <button type="button"> <i class='bx bx-history'></i> Order history <i class='bx bx-chevron-right'></i></button>
+        <a href="{% url 'tickets' %}"><button type="button"> <i class='bx bx-history'></i> Order history <i class='bx bx-chevron-right'></i></button></a>
 
         <button type="button"> <i class='bx bx-money'></i> Payment method <i class='bx bx-chevron-right'></i></button>
        
@@ -92,9 +92,9 @@
 
         <button type="button"> <i class='bx bx-cog'></i> Settings <i class='bx bx-chevron-right'></i></button>
 
-        <button type="button"> <i class='bx bx-help-circle' ></i> Help and Support <i class='bx bx-chevron-right'></i></button>
+        <a href="{% url 'help-&-support' %}"><button type="button"> <i class='bx bx-help-circle' ></i> Help and Support <i class='bx bx-chevron-right'></i></button></a>
 
-        <button type="button"> <i class='bx bx-info-circle' ></i> About and Info <i class='bx bx-chevron-right'></i></button>
+        <a href="{% url 'about-info' %}"><button type="button"> <i class='bx bx-info-circle' ></i> About and Info <i class='bx bx-chevron-right'></i></button></a>
         
         <div class="line-body"></div>
 

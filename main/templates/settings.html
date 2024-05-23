@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            margin: 20px;
+        }
+
+        .line{
+            margin-top: 10%;
+            margin-bottom: 10%;
+            border-bottom: 1px solid black;
+        }
+        /* The switch - the box around the slider */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 45px;
+            height: 11px;
+            left: 210px;
+            top: 11px;
+        }
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 23px;
+    width: 24px;
+    left: -1px;
+    bottom: -5px;
+    border: 1px solid;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+
+input:checked + .slider {
+  background-color: #FF7300;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #FF7300;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.theme-container .switch {
+    position: relative;
+    left: 264px;
+    top: -24px;
+}
+
+.theme {
+    position: relative;
+    bottom: 15px;
+}
+
+.language-container small {
+    position: relative;
+    bottom: 20px;
+}
+
+.language-container i {
+    position: relative;
+    left: 250px;
+    font-size: 30px;
+    bottom: 30px;
+}
+    </style>
+</head>
+<body>
+    <h4>Settings</h4><br>
+
+    <h6>General</h6>
+
+        <div class="general-conatiner">
+            <div class="theme-container">
+                <p>Dark Theme</p>
+                <small class="theme">Dark</small>
+
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="language-container">
+                <p>App Language</p>
+                <small>English</small>
+                <i class='bx bx-globe' ></i>
+            </div>
+        </div>
+
+        <div class="line"></div>
+
+        <h6>Push Notifications</h6>
+        <small>Statuses of rides are always enabled</small>
+
+        <div class="push-notifications-container">
+            <p>
+                Messages 
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </p>
+
+            <p>
+                Marketing
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </p>
+        </div>
+
+        <div class="line"></div>
+
+        <h6>In-app Sounds</h6>
+        <p>
+            Messages
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+            </label>
+        </p>
+
+
+</body>
+</html>
+{% endblock %}
