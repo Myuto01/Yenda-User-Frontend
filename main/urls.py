@@ -14,9 +14,9 @@ urlpatterns = [
     path('confirm-details', views.confirm_passenger_details_view, name='confirm-details'),
     path('bus_details.html', views.bus_details_view, name='bus_details'),
     path('tickets.html', views.tickets_view, name='tickets'),
-    path('profile/', views.profile_view, name='user-profile'),
+    path('profile/', views.profile_main_view, name='profile-main'),
+    path('account-info/', views.profile_view, name='account-info'),
     path('password-reset/', views.password_reset_view, name="password-reset"),
     path('password-reset-otp/', views.password_reset_otp, name="password-reset-otp"),
     path('password-reset-confirmation/', views.password_reset_confirmation, name="password-reset-confirm")
-
 ]

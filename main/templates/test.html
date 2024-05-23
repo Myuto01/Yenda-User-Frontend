@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single-Page Slider with API Calls</title>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+        .swiper-container {
+            height: 100%;
+            width: 100%;
+        }
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            flex-direction: column;
+        }
+        .slide1 {
+            background-color: #FF5733;
+        }
+        .slide2 {
+            background-color: #33FF57;
+        }
+    </style>
+</head>
+<body>
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide slide1">Page 1 Content<div id="page1-content"></div></div>
+            <div class="swiper-slide slide2">Page 2 Content<div id="page2-content"></div></div>
+        </div>
+        <!-- Add Pagination -->
+        <div class="swiper-pagination"></div>
+    </div>
+
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        var swiper = new Swiper('.swiper-container', {
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            direction: 'horizontal',
+            loop: false,
+            on: {
+                slideChange: function () {
+                    handleSlideChange(swiper.activeIndex);
+                },
+            },
+        });
+
+        function handleSlideChange(index) {
+            if (index === 0) {
+                // Check if ticket details are available in localStorage
+        var ticketDetails = localStorage.getItem('ticketDetails');
+        if (ticketDetails) {
+            // If available, render details from localStorage
+            $('#page1-content').html(ticketDetails);
+        } else {
+          var user_id = new URLSearchParams(window.location.search).get('user_id');
+          $.ajax({
+            url: '/api/v1/ticket-details/?buyer_user_id=' + user_id,
+            type: 'GET',
+            success: function(response) {
+              console.log('Response', response)
+              // Render details on the page
+              var detailsHtml = '<h1>User Details</h1>';
+              response.data.forEach(function(ticket) {
+                var attributes = ticket.attributes;
+                var ticketId = ticket.id;
+                var companyName = attributes.trip.user.company_name;
+                var tripTime = attributes.trip.departure_time;
+                var tripOrigin = attributes.trip.origin;
+                var tripDestination = attributes.trip.destination;
+                var busTripNumberPlate = attributes.bus.number_plate;
+                var tripPrice = attributes.trip.price;
+                var passengerName = attributes.passenger_name.replace(/[\[\]']+/g, '');
+                var passengerPhoneNumber = attributes.passenger_phonenumber.replace(/[\[\]']+/g, '');
+                var passengerEmail = attributes.passenger_email.replace(/[\[\]']+/g, '');
+                var seatNumber = attributes.seat_number.replace(/[\[\]']+/g, '');
+                var qrCodeUrl = attributes.qr_code; // Assuming attributes.qr_code contains the URL of the QR code image
+
+                detailsHtml += '<div class="ticket-details">';
+                detailsHtml += '<p>Company Name: ' + companyName + '</p>';
+                detailsHtml += '<p>Time: ' + tripTime + '</p>';
+                detailsHtml += '<p>Origin: ' + tripOrigin + '</p>';
+                detailsHtml += '<p>Destination: ' + tripDestination + '</p>';
+                detailsHtml += '<p>Passenger Name: ' + passengerName + '</p>';
+                detailsHtml += '<p>Number Plate: ' + busTripNumberPlate + '</p>';
+                detailsHtml += '<p>Price: ' + tripPrice + '</p>';
+                detailsHtml += '<p>Phone Number: ' + passengerPhoneNumber + '</p>';
+                detailsHtml += '<p>Email: ' + passengerEmail + '</p>';
+                detailsHtml += '<p>Seat Number: ' + seatNumber + '</p>';
+                detailsHtml += '<img src="' + qrCodeUrl + '" alt="QR Code">';
+                detailsHtml += '<button type="button" class="arrived-button" id="arrived-button" data-ticket-id="' + ticketId + '">arrived</button>';
+                detailsHtml += '</div>';
+
+              });
+              $('#page1-content').html(detailsHtml);
+              localStorage.setItem('activeTicketDetails', detailsHtml);
+            },
+            error: function(xhr, status, error) {
+              console.error('Error:', error);
+            }
+          });
+            } else if (index === 1) {
+                // Call API for Page 2
+                var ticketDetails = localStorage.getItem('ticketDetails');
+        if (ticketDetails) {
+            // If available, render details from localStorage
+            $('#page2-content').html(ticketDetails);
+        } else {
+          var user_id = new URLSearchParams(window.location.search).get('user_id');
+          $.ajax({
+            url: '/api/v1/inactive-ticket-details/?buyer_user_id=' + user_id,
+            type: 'GET',
+            success: function(response) {
+              // Render details on the other page
+              // You can customize this part based on the response from the other API
+              console.log('Render details from other page:', response);
+              // Render details on the page
+              var detailsHtml = '<h1>User Details</h1>';
+              response.data.forEach(function(ticket) {
+                var attributes = ticket.attributes;
+                var companyName = attributes.trip.user.company_name;
+                var tripTime = attributes.trip.departure_time;
+                var tripOrigin = attributes.trip.origin;
+                var tripDestination = attributes.trip.destination;
+                var busTripNumberPlate = attributes.bus.number_plate;
+                var tripPrice = attributes.trip.price;
+                var passengerName = attributes.passenger_name.replace(/[\[\]']+/g, '');
+                var passengerPhoneNumber = attributes.passenger_phonenumber.replace(/[\[\]']+/g, '');
+                var passengerEmail = attributes.passenger_email.replace(/[\[\]']+/g, '');
+                var seatNumber = attributes.seat_number.replace(/[\[\]']+/g, '');
+                var qrCodeUrl = attributes.qr_code; // Assuming attributes.qr_code contains the URL of the QR code image
+
+                detailsHtml += '<div class="ticket-details">';
+                detailsHtml += '<p>Company Name: ' + companyName + '</p>';
+                detailsHtml += '<p>Time: ' + tripTime + '</p>';
+                detailsHtml += '<p>Origin: ' + tripOrigin + '</p>';
+                detailsHtml += '<p>Destination: ' + tripDestination + '</p>';
+                detailsHtml += '<p>Passenger Name: ' + passengerName + '</p>';
+                detailsHtml += '<p>Number Plate: ' + busTripNumberPlate + '</p>';
+                detailsHtml += '<p>Price: ' + tripPrice + '</p>';
+                detailsHtml += '<p>Phone Number: ' + passengerPhoneNumber + '</p>';
+                detailsHtml += '<p>Email: ' + passengerEmail + '</p>';
+                detailsHtml += '<p>Seat Number: ' + seatNumber + '</p>';
+                detailsHtml += '<img src="' + qrCodeUrl + '" alt="QR Code">';
+
+                detailsHtml += '</div>';
+              });
+              $('#page2-content').html(detailsHtml);
+              localStorage.setItem('inactiveTicketDetails', detailsHtml);
+            },
+            error: function(xhr, status, error) {
+              console.error('Error:', error);
+            }
+            });
+
+        // Initial API call for the first slide
+        handleSlideChange(0);
+    </script>
+</body>
+</html>

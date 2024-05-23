@@ -1,5 +1,6 @@
+{% extends 'base.html' %}
 {% load static %}
-
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,68 +9,231 @@
     <title>Document</title>
 
     <style>
-        /* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-}
+        .profile-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            background: white;
+            margin-top: 45px;
+        }
 
-/* Modal Content */
-.modal-content {
-  background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
-}
+        .profile-buttons button {
+           background: white;
+           border: none;
+        }
 
-/* The Close Button */
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
+        .accountdetails-container{
+            display: flex;
+            gap: 16px;
+        }
 
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
+        .line {
+            border-bottom: 1px solid black;
+            margin-top: 10px;
+        }
+
+        .username{
+            height: fit-content;
+        }
+        .phone-number{
+            height: fit-content;
+            position: relative;
+            top: 45px;
+            right: 90px;
+        }
+
+        
+        .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        }
+
+        .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+        border-radius: 25px;
+        }
+
+        .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+        }
+
+        #nameChangeForm{
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        #nameChangeForm label{
+           font-size: smaller;
+        }
+
+        #nameChangeForm input{
+            border-radius: 8px;
+            border: 1px solid;
+            height: 25px;
+        }
+
+        #nameChangeForm #detailsChange{
+            border: none;
+            background: white;
+            font-weight: bold;
+            text-align: right;
+            font-size: 16px;
+        }
+
+        input.close-button{
+            color: #FF7300;
+            border: none !important;
+            font-weight: bold;
+            font-size: 16px;
+            width: fit-content !important;
+            position: relative;
+            top: 38px;
+            left: 184px;
+        }
+
+        #numberChangeForm{
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 39px;
+        }
+
+        #numberChangeForm label{
+            font-size: smaller;
+        }
+
+        #numberChangeForm input{
+            border-radius: 8px;
+            border: 1px solid;
+            height: 25px;
+        }
+
+        #numberChangeForm #numberChange{
+            border: none;
+            background: white;
+            font-weight: bold;
+            text-align: right;
+            font-size: 16px;
+        }
+
+        #passwordChangeForm{
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 39px;
+        } 
+
+        #passwordChangeForm label{
+            font-size: smaller;
+        }
+
+        #passwordChangeForm input{
+            border-radius: 8px;
+            border: 1px solid;
+            height: 25px;
+        }
+
+        #passwordChangeForm #changePasswordButton {
+            border: none;
+            background: white;
+            font-weight: bold;
+            text-align: right;
+            font-size: 16px;
+            position: relative;
+            width: fit-content;
+            left: 265px;
+            bottom: 1px;
+        }
+
+        #numberChangeOTPForm {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #numberChangeOTPForm label{
+            font-size: smaller;
+        }
+
+        #numberChangeOTPForm input{
+            border-radius: 8px;
+            border: 1px solid;
+            height: 25px;
+            width: 100%;
+        }
+
+        #numberChangeOTPForm #numberChangeOTPButton {
+            border: none;
+            background: white;
+            font-weight: bold;
+            text-align: right;
+            font-size: 16px;
+            width: fit-content !important;
+            position: relative !important;
+            left: 255px !important;
+            bottom: 20px;
+        }
+
 
     </style>
 </head>
 <body>
-    <h4>Profile Picture Edit</h4>
-    <h4>User name from localStorage</h4>
-    <h4>User's number from localStorage</h4>
+    <h4 style="border-bottom: 1px solid black;">Account Details</h4>
+    
+    <div class="accountdetails-container"> 
+        <img src="http://www.htmldog.com/badge1.gif" alt="profile picture" style="border-radius: 50%; border: 1px solid black;" width="135" height="125">  
+        <h4 class="username">John Doe</h4>
+        <small class="phone-number">+260(xxx) xxx-xxx</small>
+    </div>
 
-    <button id="changeNameButton">Change Name</button>
+    <div class="line"></div>
+
+    <div class="profile-buttons">
+        <button id="changeNameButton"> Change Name</span> </i></button>
+        <button id="changeNumberButton"><span  class="button-text">Change Number</span> </i></button>
+        <button id="changePasswordButton"><span  class="button-text">Change Password</span> </i></button>
+        <button> <span  class="button-text">Deactivate Account</span>  </i></button>
+    </div>
 
     <!-- The "Change Name" Modal -->
     <div id="myModal" class="modal">
         <div class="modal-content">
         <span class="close">&times;</span>
         <form id="nameChangeForm">
+            <h3 style="text-align: center;"> Change Name </h3>
             <label for="newName">New Name:</label>
             <input type="text" id="newName" name="newName">
             <label for="newLastName">New Last Name:</label>
             <input type="text" id="newLastName" name="newLastName">
-            <input type="submit" value="Submit" id="detailsChange">
+            <input type="button" value="Cancel" class="close-button" id="closeModal">
+            <input type="submit" value="Ok" id="detailsChange">
         </form>
         </div>
     </div>
     
     
-    <button id="changeNumberButton">Change Number</button>
 
     <!-- The "Change Number" Modal -->
     <div id="changeNumberModal" class="modal">
@@ -78,7 +242,8 @@
         <form id="numberChangeForm">
             <label for="newNumber">New Number:</label>
             <input type="text" id="newNumber" name="newNumber">
-            <input type="submit" value="Submit" id="numberChange">
+            <input type="button" value="Cancel" class="close-button" >
+            <input type="submit" value="Ok" id="numberChange" style="position: relative; bottom: 1px; width: fit-content; left: 255px;">
         </form>
         </div>
     </div>
@@ -87,17 +252,23 @@
    <div id="numberChangeOtpModal" class="modal">
         <div class="modal-content">
         <span class="close">&times;</span>
-        <form id="numberChangeOTPForm">
-          <label for="number_change_otp">Enter OTP:</label>
+        <form id="numberChangeOTPForm" style="margin-top: 15%;">
+            <p style="text-align: center; font-weight: bold;">Please enter the code sent to <br> +260xxxxxxxxx </p>
+          <label for="number_change_otp">Enter OTP:</label><br>
           
-          <input type="text" name="number_change_otp" id="numberChangeOtp" placeholder="Please Enter OTP">
+          <input type="text" name="number_change_otp" id="numberChangeOtp" placeholder="Please Enter OTP"><br>
           
-          <input type="submit" value="Change Number" id="numberChangeOTPButton">
+          <input type="button" value="Cancel" class="close-button" style="position: relative; top: 5px !important;">
+
+          <input type="submit" value="Ok" id="numberChangeOTPButton">
+            
+          <input type="button" value="Send another code" id="ResendOtp" style="
+            color: white; background: #FF7300; border: 1px solid #FF7300; border-radius: 8px; width: 87%; position: relative; top: 10px; left: 25px;">
+
         </form>
         </div>
     </div>
 
-    <button id="changePasswordButton">Change Password</button>
 
     <!-- The "Change Number" Modal -->
     <div id="changePasswordModal" class="modal">
@@ -106,7 +277,7 @@
       <form id="passwordChangeForm">
         <label for="old_password">Old password:</label>
         
-        <input type="password" name="old_password" id="old_password" placeholder="Please Ente Current Password">
+        <input type="password" name="old_password" id="old_password" placeholder="Please Enter Current Password">
         
         <label for="new_password">New password:</label>
        
@@ -115,16 +286,19 @@
         <label for="confirm_password">Confirm password:</label>
 
         <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password">
+        
+        <input type="button" value="Cancel" class="close-button" >
+        
+        <input type="submit" value="Ok" id="changePasswordButton">
+        
 
-        <input type="submit" value="Change Password" id="changePasswordButton">
-      </form>
+     </form>
       </div>
    </div>
 
 
 
 
-    <button>Deactivate Account</button>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="{% static 'main/js/access_token.js' %}"></script>
@@ -155,6 +329,25 @@ document.getElementById("changePasswordButton").onclick = function() {
     showModal(document.getElementById("changePasswordModal"));
 }
 
+// Get all elements with the class "close-button"
+var closeButtons = document.getElementsByClassName("close-button");
+
+// Define the function to be called on click
+function closeModal() {
+    hideModal(document.getElementById("changeNumberModal"));
+    hideModal(document.getElementById("changePasswordModal"));
+    hideModal(document.getElementById("myModal"));
+    hideModal(document.getElementById("numberChangeOtpModal"));
+}
+
+// Loop through the NodeList and assign the click event to each element
+for (var i = 0; i < closeButtons.length; i++) {
+    closeButtons[i].onclick = closeModal;
+}
+
+
+
+
 // Event listeners for close buttons
 var closeButtons = document.getElementsByClassName("close");
 for (var i = 0; i < closeButtons.length; i++) {
@@ -172,6 +365,8 @@ window.onclick = function(event) {
         }
     }
 }
+
+
 
 // Event listener for submit button in changeNumberModal
 document.getElementById("numberChange").addEventListener("click", function(event) {
@@ -376,3 +571,4 @@ function verifyNumberChangeOTP(payload) {
 </script>
 </body>
 </html>
+{% endblock %}

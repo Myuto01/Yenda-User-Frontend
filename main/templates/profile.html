@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+        .profile-body {
+            position: relative;
+            bottom: 45px;
+        }
+
+        i.bx.bx-bell{
+            position: relative;
+            font-size: 30px;
+            left: 323px;
+            bottom: 50px;
+        }
+
+        .line {
+            border-bottom: 1px solid black;
+            margin-bottom: 15px;
+            margin-top: 14px;
+        }
+
+        .line-body {
+            border-bottom: 1px solid black;
+        }
+
+        .accountdetails-container{
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+        }
+
+        .phone-number{
+            position: relative;
+            top: 45px;
+            right: 90px;
+        }
+        
+        .button-container{
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .button-container button{
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .button-container i {
+            font-size: 30px;
+            position: relative;
+            top: 8px;
+        }
+
+    
+    </style>
+</head>
+<body>
+    <h4 style="margin: 20px;">Profile</h4>
+    <i class='bx bx-bell'></i>
+
+<div class="profile-body">
+
+    <div class="line"></div>
+
+    <div class="accountdetails-container"> 
+        <img src="http://www.htmldog.com/badge1.gif" alt="profile picture" style="border-radius: 50%; border: 1px solid black;" width="135" height="125">  
+        <h4 class="username">John Doe</h4>
+        <small class="phone-number">+260(xxx) xxx-xxx</small>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="button-container">
+        <button type="button"> <i class='bx bx-user'></i> Account details <i class='bx bx-chevron-right'></i></button>
+       
+        <button type="button"> <i class='bx bx-history'></i> Order history <i class='bx bx-chevron-right'></i></button>
+
+        <button type="button"> <i class='bx bx-money'></i> Payment method <i class='bx bx-chevron-right'></i></button>
+       
+        <div class="line-body"></div>
+
+        <button type="button"> <i class='bx bx-cog'></i> Settings <i class='bx bx-chevron-right'></i></button>
+
+        <button type="button"> <i class='bx bx-help-circle' ></i> Help and Support <i class='bx bx-chevron-right'></i></button>
+
+        <button type="button"> <i class='bx bx-info-circle' ></i> About and Info <i class='bx bx-chevron-right'></i></button>
+        
+        <div class="line-body"></div>
+
+        <button type="button"> <i class='bx bx-exit' ></i> Log out <i class='bx bx-chevron-right'></i></button>
+
+    </div>
+</div>
+
+
+</body>
+</html>
+{% endblock %}
