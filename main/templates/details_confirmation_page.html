@@ -29,24 +29,25 @@
         align-items: center;
         }
 
-        .company-name{
+        .company-name {
             background: #FF7300;
             padding: 20px;
             border-radius: 20px;
-            width: 105%;
+            width: 130%;
             display: flex;
             position: relative;
             bottom: 64px;
-            right: 49px;
             font-size: 20px;
             font-weight: bold;
+            margin-left: -49px;
         }
 
         .departure-time {
             position: relative;
             bottom: 145px;
-            left: 204px;
-            width: 20px;
+            margin-left: 225px;
+            width: fit-content;
+            height: fit-content;
             display: flex;
             font-weight: bold;
         }
@@ -54,28 +55,28 @@
         .seconds {
             position: relative;
             bottom: 170px;
-            left: 205px;
-            width: 20px;
+            margin-left: 228px;
+            margin-top: 20px;
+            width: fit-content;
             display: flex;
+            height: fit-content;
             font-weight: bold;
         }
 
         .passenger-details-container {
             background: white;
-            padding: 160px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: inherit;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             position: relative;
-            top: 40px;
+            margin-top: 30px;
             border-radius: 20px;
-
         }
 
         .price-container {
             background: white;
             padding: 50px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             position: relative;
-            bottom: 98px;
             border-radius: 20px;
         }
 
@@ -89,9 +90,13 @@
             border-bottom: 1px dashed black;
         }
 
-        #tripResults{
+        #tripResults {
             position: relative;
-            bottom: 315px;
+            display: flex;
+            flex-direction: column;
+            width: fit-content;
+            margin-left: -5px;
+            /* bottom: 165px; */
         }
 
         .origin-destination {
@@ -146,15 +151,19 @@
             font-weight: bold;
         }
 
-        #passengerDetails{
+        #passengerDetails {
             position: relative;
-            bottom: 205px;
-            left: 20px;
+            display: flex;
+            top: 15px;
+            flex-direction: column;
+            margin-left: 4px;
+            width: fit-content;
         }
 
-        .seat-number{
+        .seat-number {
             position: relative;
-            left: 85px;
+            left: 90px;
+            bottom: 13px;
             font-size: 14px;
             background: #6248FF;
             padding: 7px;
@@ -174,18 +183,19 @@
         .price {
             font-weight: bold;
             position: relative;
-            top: 300px;
+            top: 180px;
             z-index: 1;
+            margin-top: 57px;
             left: 20px;
         }
 
         #tripSubmitionButton {
             width: 86%;
             position: relative;
-            bottom: 76px;
             left: 25px;
             border-radius: 8px;
             border: 1px solid;
+            margin-top: 30px;
             height: 32px;
             background: #FF7300;
             color: white;
@@ -200,21 +210,22 @@
         <h4>Ticket details  </h4>
     </div>
 
+    
+
     <div class="passenger-details-container">
-        
+        <ul id="tripResults"></ul>
+
+        <div id="passengerDetails"></div>
     </div>
-
-    <ul id="tripResults"></ul>
-
-    <div id="tripDetails">
-        <!-- Trip details will be dynamically generated here -->
-    </div>
-
-    <div id="passengerDetails"></div>
 
     <div class="price-container">
         <p class="total-price">Total price:</p><br>
     </div>
+
+    
+    
+
+    
 
     <button style="display: none;" id="tripSubmitionButton">Payment</button> 
     
@@ -327,9 +338,9 @@
                             .addClass("company-name")
                             .text(trip.attributes.user.company_name);
 
-                        var price = $("<span></span>")
+                        var price = $("#price-container")
                             .addClass("price")
-                            .html("K" + trip.attributes.price);
+                            .html("K" + trip.attributes.price); //Put in price container.
 
                         var departureDateText = $("<span></span>")
                             .addClass("departure-date-text")
@@ -357,10 +368,11 @@
 
                         // Append individual elements to the details paragraph
                         var details = $("<p></p>").addClass("trip-details");
-                        details.append(company).append(plateNumberText).append(plateNumber).append(price).append(departureDate).append(departureDateText).append(departureTimeText).append(departureTime);
+                        details.append(plateNumberText).append(plateNumber).append(price).append(departureDate).append(departureDateText).append(departureTimeText).append(departureTime);
 
                         // Append elements to the list item
                         listItem.append(originDestination);
+                        listItem.append(company);
                         listItem.append(details);
 
                         // Append the list item to the results list

@@ -1,5 +1,6 @@
+{% extends 'base.html' %}
 {% load static %}
-
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,15 +8,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trip Results</title>
     <style>
-        /* styles.css */
-
-#tripResults li {
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: #f9f9f9;
+#tripResults {
+    position: relative;
+    width: 98%;
+    margin-left: 4px;
+    border-radius: 11px;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
+
 
 #tripResults li a {
     text-decoration: none;
@@ -31,57 +32,60 @@ ul {
     list-style: none; /* Remove bullets */
 }
 
-#tripResults{
-    position: relative;
-    right: 35px;
-    width: 99%;
-}
+
 
 .trip-link {
     position: relative;
-    top: 20px;
+    top: 26px;
+    right: 37px;
 }
 
-.departure-date{
+.departure-date {
     position: relative;
-    left: 255px;
-    top: 82px;
+    left: 230px;
+    bottom: 50px;
 }
 
-.departure-time{
+.departure-time {
     position: relative;
-    left: 216px;
-    top: 44px;
+    left: 325px;
+    bottom: 100px;
 }
 
-.company-name{
-    bottom: 33px;
+.company-name {
+    display: flex;
+    bottom: 15px;
     position: relative;
     font-size: 23px;
+    left: 20px;
+    height: fit-content;
+    width: fit-content;
 }
 
-.price{
+.price {
     position: relative;
-    left: 210px;
+    left: 300px;
     color: #6284FF;
-    bottom: 35px;
+    display: flex;
+    width: fit-content;
+    bottom: 50px;
     font-size: 23px;
 }
 
-.booked-seats{
+.booked-seats {
     position: relative;
-    right: 128px;
-    top: 40px;
+    top: 14px;
+    left: 26px;
     color: #6284FF;
 } 
 
 .features-list{
-    bottom: 60px;
-    width: 0;
     position: relative;
-    right: 45px;
-    color: #7a7979;
+    bottom: 75px;
+    right: 8px;
 }
+
+    
 
 
     </style>
@@ -90,14 +94,14 @@ ul {
     <div class="container" style="background: #FF7300; color: white;">
         <p style ="text-align: center; position: relative; top: 20px;" id="originDestinationName"></p>
         <br> 
-        <span style="margin: 20px;">sort by: <select>
+        <span>sort by: <select style="border: none; color: white; background: #FF7300; font-weight: 550;">
                 <option value="Price">Price</option>
                 <option value="Date">Date</option>
                 <option value="Time">Time</option>
             </select>
         </span>
 
-        <p style="margin: 20px;">
+        <p style="position: relative;   top: 25px;">
             12 buses available
         </p>
         <br> 
@@ -129,6 +133,10 @@ ul {
                 return dateString.replace("T00:00:00Z", "");
             }
 
+            function price(Price) {
+                return Price.replace(".00", "");
+            }
+
             function stripSeconds(timeString) {
                 return timeString.split(":").slice(0, 2).join(":");
             }
@@ -144,14 +152,15 @@ ul {
         // Create a link wrapping the content of the list item
         var link = $("<a></a>").addClass("trip-link").attr("href", "/bus_details.html?id=" + trip.attributes.bus.id);
         
+        var details = $("<p></p>").addClass("trip-details")
+            .html("  <span class='company-name'>" + trip.attributes.user.company_name + "</span> <span class='price'> "  + 'K' + price(trip.attributes.price) + "</span> <span class='booked-seats'>" + trip.attributes.bus.booked_seats_count + ' seats left' + "</span>");
+        
         // Departure Date with class
         var departureDateElement = $("<span></span>").addClass("departure-date").text(departureDate);
         // Departure Time with class
         var departureTimeElement = $("<span></span>").addClass("departure-time").text(departureTime);
         // Details with class
-        var details = $("<p></p>").addClass("trip-details")
-            .html(" <span class='company-name'>" + trip.attributes.user.company_name + "</span> <span class='price'>" + 'K' + trip.attributes.price + "</span> <span class='booked-seats'>" + trip.attributes.bus.booked_seats_count + ' seats left' + "</span>");
-        
+       
         var featuresList = $("<ul></ul>").addClass("features-list");
         var features = trip.attributes.bus.features;
         features.forEach(function(feature, index) {
@@ -162,7 +171,7 @@ ul {
         });
         
         // Append content to the link
-        link.append(departureDateElement, " ", departureTimeElement, "<br>", details, "<br>", featuresList);
+        link.append(details, featuresList, departureTimeElement  , " ", departureDateElement);
         
         // Append the link to the list item
         listItem.append(link);
@@ -181,3 +190,4 @@ ul {
     </script>
 </body>
 </html>
+{% endblock %}
