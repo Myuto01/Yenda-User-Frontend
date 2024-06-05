@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,12 +9,16 @@
     <title>Login | Yenda</title>
     <style>
         .container {
+            position: relative;
+            top: 150px;
             background-color: white;
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
+            max-width: 350px;
             margin: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
         }
 
         #user-login_form {
@@ -24,22 +31,14 @@
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ccc;
-            border-radius: 3px;
+            border-radius: 20px;
         }
 
         #redirectButton {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 3px;
             cursor: pointer;
         }
 
-        #redirectButton:hover {
-            background-color: #0056b3;
-        }
+       
 
     
         .success-message,
@@ -64,6 +63,10 @@
             color: white;
         }
 
+        .line{
+            border-top: 1px solid black;
+        }
+
     </style>
 </head>
 <body>
@@ -72,11 +75,17 @@
 
     <div class="container">
         <form id="user-login_form">
+            <label for="phone_number">Phone number</label>
+
             <input type="tel" name="phone_number" id="phone_number" placeholder="Enter Phone Number">
+             <label for="password">password</label>
             <input type="password" name="password" id="password" placeholder="Enter Password">
-            <input type="submit" id="user_login_submit" value="Login">
+            <input style="background: #FF7320; color: white;" type="submit" id="user_login_submit" value="Sign in">
         </form>
-        <button id="redirectButton">Forgot Password</button>
+
+        <div class="line"></div>
+
+        <p style="text-align: center;">Forgot password? <a href="#" id="redirectButton">reset password</a></p>
     </div>
     
 
@@ -87,7 +96,7 @@
 
         $('#user_login_submit').click(function(e) {
         e.preventDefault();
-
+            $('#user_login_submit').val('Signing in..')
             // Serialize form data
             var formData = {
                 "phone_number": $("#phone_number").val(),
@@ -110,11 +119,14 @@
                     displaySuccessMessage('Successful login')
                     localStorage.setItem("access_token", response.data.attributes.access_token)
                     localStorage.setItem("refresh_token", response.data.attributes.refresh_token)
-                        
+                   
+                    $('#user_login_submit').val('Sign in')
+                   
                     window.location.href = "{% url 'home' %}";
                 },
                 error: function(xhr, status, error) {
                     console.error('Error submitting form:', error);
+                    $('#user_login_submit').val('Sign in')
                     displayGlobalErrorMessage(xhr);
                 }
             });
@@ -158,3 +170,4 @@
 </script>
 </body>
 </html>
+{% endblock %}

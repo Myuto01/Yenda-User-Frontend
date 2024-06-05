@@ -1,12 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration | YENDA </title>
+    <style>
+        #registeration_form {
+            display: flex;
+            position: relative;
+            flex-direction: column;
+            gap: 17px;
+            top: 111px;
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            width: 94%;
+            left: 11px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        input {
+            height: 32px;
+            border-radius: 20px;
+            border: 1px solid black;
+        }
+
+        .line{
+            border-top: 1px solid black;
+        }
+    </style>
 </head>
 <body>
     <form id="registeration_form">
+        <h3 style="text-align: center;">Sign up</h3>
         <input type="text" name="first_name" id="first_name" placeholder="First name" required>
 
         <input type="text" name="last_name" id="last_name" placeholder="Last name" required>
@@ -17,7 +46,14 @@
 
         <input type="password" name="password2" id="password2" placeholder="Confirm password" required>
 
-        <input type="submit" id="registeration_submit" value="Create Account">
+        <input style="background-color: #FF7320; color: white;" type="submit" id="registeration_submit" value="Create Account">
+       
+        <div class="line"></div><br>
+
+        <p style="text-align: center;">Already have an account? <a href="{% url 'login' %}">sign in</a>
+        </p>
+
+
     </form>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
@@ -76,3 +112,4 @@
 
 </body>
 </html>
+{% endblock %}

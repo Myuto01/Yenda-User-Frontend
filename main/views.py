@@ -53,4 +53,7 @@ def password_reset_otp(request):
 
 def password_reset_confirmation(request):
     return render(request, 'password_reset_confirmation.html')
+
+def ticket_success(request):
+    return render(request, 'ticket_success.html')
     
