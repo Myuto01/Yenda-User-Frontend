@@ -61,6 +61,7 @@
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 8px;
+    width: 50%;
 }
 
 #tripsearchsubmitButton {
@@ -193,7 +194,7 @@
 
                 $('#tripsearchsubmitButton').val('Searching')
 
-                $('#tripsearchsubmitButton').css('background-color', '#b65403'); // Change the background color of the button
+                $('#tripsearchsubmitButton').css('background-color', '#b65403'); 
 
                 // Construct the URL with query parameters
                 var origin = $("#origin").val();
@@ -221,6 +222,8 @@
                        
                         $('#tripsearchsubmitButton').val('Find Bus')
 
+                        $('#tripsearchsubmitButton').css('background-color', '#FF7320'); // Change the background color of the button
+
                         localStorage.setItem('tripResults', JSON.stringify(response));
 
                         window.location.href = "{% url 'trip-results' %}";
@@ -229,6 +232,7 @@
                     error: function(xhr, status, error) {
                         console.error('Error:', error);
                         $('#errorContainer').text('An error occurred: ' + error);
+                        $('#tripsearchsubmitButton').css('background-color', '#FF7320'); 
                         $('#tripsearchsubmitButton').val('Find Bus')
 
                     }
