@@ -47,7 +47,7 @@ def settings_view(request):
 
 def password_reset_view(request):
     return render(request, 'password_reset.html')
-
+  
 def password_reset_otp(request):
     return render(request, 'password_reset_otp.html')
 

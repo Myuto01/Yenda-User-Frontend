@@ -42,13 +42,13 @@ ul {
 
 .departure-date {
     position: relative;
-    left: 230px;
+    left: 220px;
     bottom: 50px;
 }
 
 .departure-time {
     position: relative;
-    left: 325px;
+    left: 320px;
     bottom: 100px;
 }
 
@@ -64,7 +64,7 @@ ul {
 
 .price {
     position: relative;
-    left: 300px;
+    left: 280px;
     color: #6284FF;
     display: flex;
     width: fit-content;
@@ -85,6 +85,20 @@ ul {
     right: 8px;
 }
 
+p .savedDate {
+    position: relative;
+    left: 210px;
+    width: fit-content;
+    top: 25px;
+}
+
+.span-drop{
+    position: relative;
+    bottom: 60px;
+}
+
+
+
     
 
 
@@ -93,17 +107,22 @@ ul {
 <body>
     <div class="container" style="background: #FF7300; color: white;">
         <p style ="text-align: center; position: relative; top: 20px;" id="originDestinationName"></p>
+        <br>
+        <p style =" position: relative; top: 30px;" id="savedDate"></p>
+
         <br> 
-        <span>sort by: <select style="border: none; color: white; background: #FF7300; font-weight: 550;">
+        <span class="span-drop">sort by: <select style="border: none; color: white; background: #FF7300; font-weight: 550;">
                 <option value="Price">Price</option>
                 <option value="Date">Date</option>
                 <option value="Time">Time</option>
             </select>
         </span>
 
-        <p style="position: relative;   top: 25px;">
-            12 buses available
+        <p style="position: relative; bottom: 30px;"
+             id="tripCount"> 
         </p>
+
+        
         <br> 
     </div>
 
@@ -114,17 +133,25 @@ ul {
     <script>
         $(document).ready(function() {
 
-            var savedOrigin = localStorage.getItem('origin')
-            console.log('savedOrigin', savedOrigin)
+            var savedOrigin = localStorage.getItem('origin');
 
-            var savedDestination = localStorage.getItem('destination')
-            console.log('savedDestination', savedDestination)
+            var savedDestination = localStorage.getItem('destination');
 
-            OriginDestinationString = $('#originDestinationName')
+            OriginDestinationString = $('#originDestinationName');
             var OriginDestinationText = $('<p></p>')
                 .text(savedOrigin + ' To ' + savedDestination)
 
-            OriginDestinationString.append(OriginDestinationText)
+            OriginDestinationString.append(OriginDestinationText);
+
+
+            var savedDate = localStorage.getItem('date');
+
+            savedDateString = $('savedDate');
+            var savedDateText = $('<p class="savedDate"></p>')
+                .text('Date: ' + savedDate)
+
+            OriginDestinationString.append(savedDateText);
+
 
             // Retrieve trip data
             var tripsData = JSON.parse(localStorage.getItem('tripResults'));
@@ -143,49 +170,51 @@ ul {
 
             // Check if tripsData contains the 'data' key
             if ('data' in tripsData && Array.isArray(tripsData.data)) {
-    var tripResultsList = $("#tripResults");
-    tripsData.data.forEach(function(trip) {
-        var listItem = $("<li></li>");
-        var departureDate = stripDate(trip.attributes.departure_date);
-        var departureTime = stripSeconds(trip.attributes.departure_time);
-        
-        // Create a link wrapping the content of the list item
-        var link = $("<a></a>").addClass("trip-link").attr("href", "/bus_details.html?id=" + trip.attributes.bus.id);
-        
-        var details = $("<p></p>").addClass("trip-details")
-            .html("  <span class='company-name'>" + trip.attributes.user.company_name + "</span> <span class='price'> "  + 'K' + price(trip.attributes.price) + "</span> <span class='booked-seats'>" + trip.attributes.bus.booked_seats_count + ' seats left' + "</span>");
-        
-        // Departure Date with class
-        var departureDateElement = $("<span></span>").addClass("departure-date").text(departureDate);
-        // Departure Time with class
-        var departureTimeElement = $("<span></span>").addClass("departure-time").text(departureTime);
-        // Details with class
-       
-        var featuresList = $("<ul></ul>").addClass("features-list");
-        var features = trip.attributes.bus.features;
-        features.forEach(function(feature, index) {
-            featuresList.append($("<li></li>").text(feature.name).css("border", "none"));
-            if (index < features.length - 1) {
-                featuresList.append(", ");
+                var tripResultsList = $("#tripResults");
+                
+                // Get the number of trips
+                var numberOfTrips = tripsData.data.length;
+
+                // Update the trip count in the <p> tag
+                $("#tripCount").text("Number of trips found: " + numberOfTrips);
+
+                tripsData.data.forEach(function(trip) {
+                    var listItem = $("<li></li>");
+                    var departureDate = stripDate(trip.attributes.departure_date);
+                    var departureTime = stripSeconds(trip.attributes.departure_time);
+
+                    // Create a link wrapping the content of the list item
+                    var link = $("<a></a>").addClass("trip-link").attr("href", "/bus_details.html?id=" + trip.attributes.bus.id);
+
+                    var details = $("<p></p>").addClass("trip-details")
+                        .html("  <span class='company-name'>" + trip.attributes.user.company_name + "</span> <span class='price'> "  + 'K' + price(trip.attributes.price) + "</span> <span class='booked-seats'>" + trip.attributes.bus.booked_seats_count + ' seats left' + "</span>");
+
+                    // Departure Date with class
+                    var departureDateElement = $("<span></span>").addClass("departure-date").text(departureDate);
+                    // Departure Time with class
+                    var departureTimeElement = $("<span></span>").addClass("departure-time").text(departureTime);
+
+                    var featuresList = $("<ul></ul>").addClass("features-list");
+                    var features = trip.attributes.bus.features;
+                    features.forEach(function(feature, index) {
+                        featuresList.append($("<li></li>").text(feature.name).css("border", "none"));
+                        if (index < features.length - 1) {
+                            featuresList.append(", ");
+                        }
+                    });
+
+                    // Append content to the link
+                    link.append(details, featuresList, departureTimeElement, " ", departureDateElement);
+
+                    // Append the link to the list item
+                    listItem.append(link);
+
+                    // Append the list item to the list
+                    tripResultsList.append(listItem);
+                });
+            } else {
+                console.error("The 'data' key is missing or not an array in tripsData:", tripsData);
             }
-        });
-        
-        // Append content to the link
-        link.append(details, featuresList, departureTimeElement  , " ", departureDateElement);
-        
-        // Append the link to the list item
-        listItem.append(link);
-        
-        // Append the list item to the list
-        tripResultsList.append(listItem);
-    });
-    }else {
-            console.error("The 'data' key is missing or not an array in tripsData:", tripsData);
-        }
-
-
-            
-
         });
     </script>
 </body>
