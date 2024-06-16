@@ -208,8 +208,6 @@
                 var savedDestination = localStorage.setItem('destination', $("#destination").val())
 
                 var savedDate = localStorage.setItem('date', $("#date").val() )
-
-                console.log('Date:', savedDate)
                 
                 var url = 'https://yenda-crs-api-2.onrender.com/api/v1/trip-search/?origin=' + origin + '&destination=' + destination + '&date=' + date;
 
