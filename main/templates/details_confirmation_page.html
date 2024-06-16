@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Passenger Details</title>
+    <script src="https://kit.fontawesome.com/02677053c5.js" crossorigin="anonymous"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,18 +12,144 @@
             padding: 20px;
         }
 
+        li{
+            list-style: none;
+        }
+
+        .company-name{
+            background: #FF7300;
+            padding: 20px;
+            border-radius: 20px;
+            width: 280px;
+            display: flex;
+            position: relative;
+            right: 44px;
+            color: white;
+            font-weight: bold;
+        }
+
+
+        .departure{
+            position: relative;
+            bottom: 50px;
+            left: 80px;
+        }
+
+        .departure-time {
+            position: relative;
+            bottom: 65px;
+            left: 85px;
+            color: white;
+        }
+
+        .time-small{
+            position: relative;
+            left: 35px;
+        }
+
+        .stripped-time {
+            position: relative;
+            left: 120px;
+            top: 5px;
+            font-weight: bold;
+        }
+
+        #passengerDetails {
+            background: white;
+            border-radius: 20px;
+            height: auto;
+            padding: 130px;
+            position: relative;
+            bottom: 105px;
+            right: 2px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
         .passenger-info {
-            margin-bottom: 10px;
+            position: relative;
+            right: 110px;
+            width: 300px;
+            top: 40px;
+            display: flex;
+            gap: 105px;
+        }
+
+        .trip-route {
+            display: flex;
+            gap: 65px;
+            position: relative;
+            top: 130px;
+            right: 10px;
+            z-index: 1;
+            font-weight: bold;
+        }
+
+        i.fa-solid.fa-bus {
+            font-weight: 900;
+            font-size: 25px;
         }
 
         .seat-number {
             font-weight: bold;
-            color: #333;
+            color: white;
+            background: #A7AEF9;
+            padding: 4px;
+            border-radius: 20px;
         }
 
         .passenger-name {
             color: #007bff;
         }
+
+        .plate-number {
+            position: relative;
+            z-index: 1;
+            top: 66px;
+            right: 22px;
+        }
+
+        .small-plate-number{
+            position: relative;
+            right: 41px;
+        }
+
+        .number-plate{
+            font-weight: bold;
+        }
+
+        .departure-date {
+            position: relative;
+            top: 100px;
+            z-index: 1;
+            left: 185px;
+        }
+
+        .stripped-date{
+            font-weight: bold;
+        }
+
+        .total-price {
+            position: relative;
+            z-index: 1;
+            bottom: 175px;
+            left: 60px;
+        }
+
+        .line {
+            border-top: 1px solid;
+            margin-bottom: 20px;
+            position: relative;
+            bottom: 185px;
+            left: 19px;
+            width: 270px;
+        }
+
+        .total-ticket-price{
+            position: relative;
+            bottom: 25px;
+        }
+
+        
 
         .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4); }
         
@@ -79,17 +206,19 @@
             z-index: 9999;
             display: none;
         }
+
+ 
     </style>
 </head>
 <body>
+
     <div class="error-message" id="error-message"></div>
+
     <ul id="tripResults"></ul>
 
-    <div id="tripDetails">
-        <!-- Trip details will be dynamically generated here -->
-    </div>
-
     <div id="passengerDetails"></div>
+
+    <div id="totalPrice"></div>
 
     <button id="submitButton" style="display: none;">Submit</button> 
     
@@ -112,6 +241,7 @@
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
     <script>
         $(document).ready(function() {
 
@@ -128,7 +258,6 @@
                     xhr.setRequestHeader("Authorization", "Bearer " + access_token);
                 },
                 success: function(response) {
-                    console.log('User ID:', response.data.user_id);
                     buyer_user_id = response.data.user_id
                     $('#submitButton').show();
 
@@ -168,7 +297,7 @@
                         const email = parsedFormData.match(/email=([^&]*)/)[1]; // Extract email from form data
                         const phone = parsedFormData.match(/phone=([^&]*)/)[1]; // Extract phone from form data
 
-                        passengerDetailsDiv.append('<p class="passenger-info"><span class="seat-number">Seat ' + seat + ':</span> <span class="passenger-name">' + name + '</span></p>');
+                        passengerDetailsDiv.append('<p class="passenger-info"> <span class="passenger-name">' + name + '</span> <span class="seat-number">Seat ' + seat + '</span></p>');
                         passengerNames.push(name);
                         passengerPhoneNumbers.push(phone);
                         passengerEmails.push(email);
@@ -180,7 +309,14 @@
             }
 
 
-        
+        function stripDate(dateString) {
+            return dateString.replace("T00:00:00Z", "");
+        }
+
+        function stripSeconds(timeString) {
+            return timeString.split(":").slice(0, 2).join(":");
+        }
+
         // Retrieve trip data
         var tripsData = JSON.parse(localStorage.getItem('tripResults'));
         var trip; 
@@ -189,39 +325,77 @@
 
         // Check if tripsData contains the 'data' key
         if ('data' in tripsData && Array.isArray(tripsData.data)) {
-            var tripResultsList = $("#tripResults");
-            tripsData.data.forEach(function(tripData) {
-                trip = tripData; // Assign trip data to the trip variable
-                var listItem = $("<li></li>");
-                var link = $("<a></a>")
-                    .text(trip.attributes.origin + " to " + trip.attributes.destination);
-                var details = $("<p></p>")
-                    .text("Company: " + trip.attributes.user.company_name + ", Price: " + trip.attributes.price + ", Date: " + trip.attributes.departure_date + ", Time: " + trip.attributes.departure_time + ", Plate Number: " + trip.attributes.bus.number_plate);
+    var tripResultsList = $("#tripResults");
+    var totalTicketPrice = $("#totalPrice");
 
-                var featuresList = $("<ul></ul>");
-                trip.attributes.bus.features.forEach(function(feature) {
-                    featuresList.append($("<li></li>").text(feature.name));
-                });
+    tripsData.data.forEach(function(tripData) {
+        var trip = tripData; // Assign trip data to the trip variable
+        var listItem = $("<li></li>");
+
+        // Create and append link for trip route
+        var tripRoute = $("<p></p>")
+            .html(trip.attributes.origin + ' <i class="fa-solid fa-bus"></i> ' + trip.attributes.destination)
+            .addClass('trip-route');
+        
+        // Create and append details
+        var details = $("<div></div>").addClass('trip-details');
+
+        // Individual elements with classes
+        var companyName = $("<span></span>")
+            .html(trip.attributes.user.company_name)
+            .addClass('company-name');
+        var price = $("<span></span>")
+            .html(trip.attributes.price)
+            .addClass('price');
+        var departureDate = $("<span></span>")
+            .html("<small class='date-small'>Date:</small><br> <span class='stripped-date'>" + stripDate(trip.attributes.departure_date) + '</span>')
+            .addClass('departure-date');
+        var departureTime = $("<span></span>")
+            .html("<small class='time-small'>Time:</small><br> <span class='stripped-time'>" + stripSeconds(trip.attributes.departure_time) + "</span>")
+            .addClass('departure-time');
+        var plateNumber = $("<span></span>")
+            .html("<small class='small-plate-number'>Plate number:</small><br> <span class='number-plate'>" + trip.attributes.bus.number_plate + "</span>")
+            .addClass('plate-number');
+
+        // Calculate total price
+        var seatPrice = parseFloat(trip.attributes.price);
+        var tripTotalPrice = seatPrice * (selectedSeats.length || 0);
+        totalPrice += tripTotalPrice;
 
 
-                var operator_phone_number = trip.attributes.user.phone_number;
-            
-                // Calculate total price
-                var seatPrice = trip.attributes.price;
-                totalPrice = seatPrice * (selectedSeats ? selectedSeats.length : 0);
 
-                // Add total price to the details
-                details.append("<br><strong>Total Price for " + (selectedSeats ? selectedSeats.length : 0) + " seats: " + totalPrice + "</strong>");
+        // Append all details to the details div
+        details.append(companyName)
+            .append(departureDate)
+            .append(departureTime)
+            .append(plateNumber);
 
-                listItem.append(link);
-                listItem.append(details);
-                listItem.append(featuresList);
-                tripResultsList.append(listItem);
-            });
-        } else {
-            // Handle case where tripsData does not have 'data' key or it is not an array
-            console.error("The 'data' key is missing or not an array in tripsData:", tripsData);
-        }
+        // Features list
+        var featuresList = $("<ul></ul>").addClass('features-list');
+        trip.attributes.bus.features.forEach(function(feature) {
+            featuresList.append($("<li></li>").text(feature.name).addClass('feature'));
+        });
+
+        listItem.append(tripRoute)
+                .append(details)
+                .append(featuresList);
+
+        tripResultsList.append(listItem);
+    });
+
+    // Display total price
+    var totalTicketPriceElement = $("<p></p>")
+            .html("<div class='line'></div> <strong class='total-price'>Total Ticket Price: " + totalPrice + "</strong>")
+            .addClass('total-ticket-price');
+        totalTicketPrice.append(totalTicketPriceElement);
+    } else {
+        // Handle case where tripsData does not have 'data' key or it is not an array
+        var errorMessage = $("<p></p>")
+            .text("The 'data' key is missing or not an array in tripsData.")
+            .addClass('error-message');
+        $("#error-message").append(errorMessage);
+    }
+
 
         $('.close').click(function() {
             $('#phoneNumberModal').hide();

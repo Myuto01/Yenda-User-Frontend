@@ -56,13 +56,14 @@
 
         .departure-date {
             position: relative;
-            left: 235px;
+            left: 245px;
             top: 32px;
         }
 
         .departure-time {
             position: relative;
             left: 200px;
+            bottom: 25px;
         }
 
         .passengerForm {
@@ -180,6 +181,8 @@
 
                 // Attach event handler for submit all button
                 $('#submitAllButton').click(function() {
+
+                   
                     // Loop through each form
                     $('.passengerForm').each(function(index) {
                         // Gather form data
@@ -190,9 +193,8 @@
                         const formDataKey = 'passengerDetails_' + seat;
                         localStorage.setItem(formDataKey, JSON.stringify(formData));
 
-                        console.log('Form data saved for seat ' + seat + ':', formData);
-                        
-                        window.location.href = '{% url 'confirm-details' %}';
+                       
+                        window.location.href = '{% url "confirm-details" %}';
 
                     });
                 });
