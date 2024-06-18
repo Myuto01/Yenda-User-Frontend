@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>{% block title %}Profile Tab| BusBolt{% endblock %}</title>
 
     <style>
         .profile-buttons {
@@ -35,12 +35,15 @@
 
         .username{
             height: fit-content;
+            width: 107px;
         }
-        .phone-number{
+        
+        .phone-number {
             height: fit-content;
             position: relative;
-            top: 45px;
-            right: 90px;
+            top: 70px;
+            right: 100px;
+            width: 157px;
         }
 
         
@@ -227,7 +230,7 @@
             <input type="text" id="newName" name="newName">
             <label for="newLastName">New Last Name:</label>
             <input type="text" id="newLastName" name="newLastName">
-            <input type="button" value="Cancel" class="close-button" id="closeModal">
+            <input type="button" style="left: 140px;" value="Cancel" class="close-button" id="closeModal">
             <input type="submit" value="Ok" id="detailsChange">
         </form>
         </div>
@@ -242,8 +245,8 @@
         <form id="numberChangeForm">
             <label for="newNumber">New Number:</label>
             <input type="text" id="newNumber" name="newNumber">
-            <input type="button" value="Cancel" class="close-button" >
-            <input type="submit" value="Ok" id="numberChange" style="position: relative; bottom: 1px; width: fit-content; left: 255px;">
+            <input type="button" style="left: 145px;" value="Cancel" class="close-button" >
+            <input type="submit" value="Ok" style="left: 230px;" id="numberChange" style="position: relative; bottom: 1px; width: fit-content; left: 255px;">
         </form>
         </div>
     </div>
@@ -258,7 +261,7 @@
           
           <input type="text" name="number_change_otp" id="numberChangeOtp" placeholder="Please Enter OTP"><br>
           
-          <input type="button" value="Cancel" class="close-button" style="position: relative; top: 5px !important;">
+          <input type="button" value="Cancel"  class="close-button" style="position: relative; top: 5px !important;">
 
           <input type="submit" value="Ok" id="numberChangeOTPButton">
             
@@ -287,9 +290,9 @@
 
         <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password">
         
-        <input type="button" value="Cancel" class="close-button" >
+        <input type="button" value="Cancel" class="close-button" style="left: 145px;" >
         
-        <input type="submit" value="Ok" id="changePasswordButton">
+        <input type="submit" value="Ok" id="changePasswordButton" style="left: 225px;">
         
 
      </form>
@@ -411,7 +414,7 @@ if (checkAccessToken()) {
             xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
         },
         success: function(response) {
-            console.log('User ID:', response.data.user_id);
+            console.log('User ID:', response);
             buyer_user_id = response.data.user_id;
             $('#submitButton').show();
         },

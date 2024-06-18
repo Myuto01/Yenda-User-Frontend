@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Single-Page Slider with API Calls</title>
+    <title>{% block title %}Ticket History| BusBolt{% endblock %}</title>
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
     <style>
         body, html {
@@ -45,7 +45,7 @@
         }
         .swiper-container {
             width: 100%; /* Adjust width as needed */
-            height: 100%; /* Adjust height as needed */
+            height: 88%; /* Adjust height as needed */
             overflow: hidden;
             overflow-y: scroll;
             position: relative;
@@ -198,7 +198,9 @@
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-     var swiper = new Swiper('.swiper-container', {
+    accessToken = localStorage.getItem("access_token");
+
+var swiper = new Swiper('.swiper-container', {
     pagination: {
         el: '.swiper-pagination',
         clickable: true,
@@ -229,25 +231,49 @@ function handleSlideChange(index) {
     fetchTicketDetails(apiUrl, contentSelector);
 }
 
+var buyer_user_id = null;
+
+// Retrieve user ID
+$.ajax({
+    url: 'https://yenda-app-api.onrender.com/api/v1/user_id',
+    type: 'GET',
+    contentType: "application/json",
+    beforeSend: function(xhr) {
+        xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+    },
+    success: function(response) {
+        console.log('User ID:', response);
+        buyer_user_id = response.data.user_id;
+        $('#submitButton').show();
+        // Initial API call for the first slide after user ID is fetched
+        handleSlideChange(0);
+    },
+    error: function(xhr, status, error) {
+        console.error('Error fetching user ID:', error);
+    }
+});
+
 function fetchTicketDetails(apiUrl, contentSelector) {
-    var user_id = new URLSearchParams(window.location.search).get('user_id');
+    if (!buyer_user_id) {
+        console.error('User ID not available');
+        return;
+    }
     $.ajax({
-        url: apiUrl + '?buyer_user_id=' + user_id,
+        url: apiUrl + '?buyer_user_id=' + buyer_user_id,
         type: 'GET',
         success: function(response) {
             var detailsHtml = '<h3>Order History</h3>';
             response.data.forEach(function(ticket) {
                 var attributes = ticket.attributes;
                 var companyName = attributes.trip.user.company_name;
-                var tripTime = stripSeconds( attributes.trip.departure_time);
-                var tripDate = stripDate( attributes.trip.departure_date);
+                var tripTime = stripSeconds(attributes.trip.departure_time);
+                var tripDate = stripDate(attributes.trip.departure_date);
                 var tripOrigin = attributes.trip.origin;
                 var tripDestination = attributes.trip.destination;
 
-                detailsHtml += '<p class="date-time">' + tripDate + ' ' + ' ' + tripTime + '</p>';
-               
+                detailsHtml += '<p class="date-time">' + tripDate + ' ' + tripTime + '</p>';
                 detailsHtml += '<div class="ticket-details">';
-                detailsHtml += '<p>' + companyName + '<br> <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM16 8H8C7.45 8 7 8.45 7 9V13C7 14.1 7.9 15 9 15V22H11V18H13V22H15V15C16.1 15 17 14.1 17 13V9C17 8.45 16.55 8 16 8ZM15 13H9V10H15V13Z" fill="currentColor"/></svg></p>';
+                detailsHtml += '<p>' + companyName + '<br><svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM16 8H8C7.45 8 7 8.45 7 9V13C7 14.1 7.9 15 9 15V22H11V18H13V22H15V15C16.1 15 17 14.1 17 13V9C17 8.45 16.55 8 16 8ZM15 13H9V10H15V13Z" fill="currentColor"/></svg></p>';
                 detailsHtml += '<button type="button" class="arrived-button" id="arrived-button" data-ticket-id="' + ticket.id + '">Arrived</button>';
                 detailsHtml += '<p class="origin-destination"><small class="small-from">From</small><br><span class="origin">' + tripOrigin + '</span><small class="small-time">' + tripTime + '</small><small class="small-to">To</small><br><span class="destination">' + tripDestination + '</span></p>';
                 detailsHtml += '</div>';
@@ -255,7 +281,7 @@ function fetchTicketDetails(apiUrl, contentSelector) {
             $(contentSelector).html(detailsHtml);
         },
         error: function(xhr, status, error) {
-            console.error('Error:', error);
+            console.error('Error fetching ticket details:', error);
         }
     });
 }
@@ -265,9 +291,6 @@ function setActiveTab(activeTabId) {
     $('#' + activeTabId).addClass('active');
 }
 
-// Initial API call for the first slide
-handleSlideChange(0);
-
 // Tab click event handlers
 $('#tab-active').click(function() {
     swiper.slideTo(0);
@@ -276,15 +299,14 @@ $('#tab-inactive').click(function() {
     swiper.slideTo(1);
 });
 
-    function stripDate(dateString) {
-        return dateString.replace("T00:00:00Z", "");
-    }
+function stripDate(dateString) {
+    return dateString.replace("T00:00:00Z", "");
+}
 
-    function stripSeconds(timeString) {
-          return timeString.split(":").slice(0, 2).join(":");
-      }
-
-    </script>
+function stripSeconds(timeString) {
+    return timeString.split(":").slice(0, 2).join(":");
+}
+</script>
 </body>
 </html>
 {% endblock %}
