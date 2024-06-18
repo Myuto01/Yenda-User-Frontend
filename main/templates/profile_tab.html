@@ -207,7 +207,9 @@
     
     <div class="accountdetails-container"> 
         <img src="http://www.htmldog.com/badge1.gif" alt="profile picture" style="border-radius: 50%; border: 1px solid black;" width="135" height="125">  
-        <h4 class="username">John Doe</h4>
+        <h4 id="first-name" id="last-name" ></h4>
+        <h4 id="last-name"></h4>
+
         <small class="phone-number">+260(xxx) xxx-xxx</small>
     </div>
 
@@ -298,10 +300,6 @@
      </form>
       </div>
    </div>
-
-
-
-
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="{% static 'main/js/access_token.js' %}"></script>
@@ -423,6 +421,23 @@ if (checkAccessToken()) {
         }
     });
 
+    $.ajax({
+        url: 'https://yenda-app-api.onrender.com/api/v1/user-details/',
+        type: 'GET',
+        contentType: "application/json",
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+        },
+        success: function(response) {
+            console.log('User details:', response);
+            $('#first-name').text(response.data.data.first_name);
+            $('#last-name').text(response.data.data.last_name);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+
 
 
 
@@ -511,12 +526,13 @@ function updateUserProfile(payload) {
         },
         success: function(response) {
             console.log("Change successful:", response);
-            
+            $('#first-name').text(response.data.attributes.first_name)
+            $('#last-name').text(response.data.attributes.last_name)
+
         },
 
         error: function(xhr, status, error) {
             console.error("Error:", error);
-            // Provide feedback to the user (e.g., display an error message)
         }
     });
 }
@@ -561,7 +577,6 @@ function verifyNumberChangeOTP(payload) {
         },
         success: function(response) {
             console.log("Change successful:", response);
-            // Close the modal or provide feedback to the user
         },
         error: function(xhr, status, error) {
             console.error("Error:", error);
